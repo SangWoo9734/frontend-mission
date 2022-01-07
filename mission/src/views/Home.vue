@@ -3,12 +3,12 @@
     <img alt="Vue logo" src="../assets/logo.png">
     <HelloWorld msg="Welcome to Your Vue.js App"/>
 
-    <div class="rotate">
-      <input v-bind:value="word" v-on:input="changeWord"/>
-      <button v-on:click="rotateWord">Run</button>
+    <div>
+      <input id='word_input' v-bind:value="word" v-on:input="changeWord" data-word/>
+      <button id='word_rotate' v-on:click="rotateWord">제출</button>
+      <button id='word_notice' v-on:click="showAlert">알림</button>
     </div>
-    <p>{{word}}</p>
-    <p v-if="word != ''">Rotate Times : {{count}}</p>
+    <p class='result'>{{word}}</p>
   </div>
 </template>
 
@@ -28,11 +28,20 @@ export default {
     };
   },
   methods: {
+    showAlert() {
+      /* eslint-disable */
+      alert(this.word === '' ? 'Enter Word' : `${this.word} ${this.count}`);
+      /* eslint-enable */
+    },
     changeWord(e) {
       this.word = e.target.value;
-      this.count = this.word === '' ? 0 : this.count;
+      this.count = 0;
     },
     rotateWord() {
+      if (this.word === '') {
+        this.showAlert();
+        return;
+      }
       this.word = this.word[this.word.length - 1] + this.word.slice(0, this.word.length - 1);
       this.count += 1;
     },
@@ -41,10 +50,8 @@ export default {
 </script>
 
 <style>
-.rotate input {
-  margin-right : 10px;
-}
 .rotate button {
   padding : 3px, 5px;
+  margin-left : 10px;
 }
 </style>
