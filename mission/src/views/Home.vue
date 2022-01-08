@@ -3,10 +3,10 @@
     <img alt="Vue logo" src="../assets/logo.png">
     <HelloWorld msg="Welcome to Your Vue.js App"/>
 
-    <div>
-      <input id='word_input' v-bind:value="word" v-on:input="changeWord" data-word/>
-      <button id='word_rotate' v-on:click="rotateWord">제출</button>
-      <button id='word_notice' v-on:click="showAlert">알림</button>
+    <div class='word-container'>
+      <input id='word-input' v-bind:value="word" v-on:input="changeWord" data-word/>
+      <button id='word-rotate' v-on:click="rotateWord">제출</button>
+      <button id='word-notice' v-on:click="changeCount">알림</button>
     </div>
     <p class='result'>{{word}}</p>
   </div>
@@ -30,28 +30,45 @@ export default {
   methods: {
     showAlert() {
       /* eslint-disable */
-      alert(this.word === '' ? 'Enter Word' : `${this.word} ${this.count}`);
+      if (this.word === '') {
+        alert('Enter Word');
+      } else {
+        alert(`${this.word} ${this.count}`);
+      }
       /* eslint-enable */
     },
     changeWord(e) {
       this.word = e.target.value;
       this.count = 0;
     },
+    changeCount() {
+      this.count += 1;
+      this.showAlert();
+    },
     rotateWord() {
       if (this.word === '') {
         this.showAlert();
         return;
       }
-      this.word = this.word[this.word.length - 1] + this.word.slice(0, this.word.length - 1);
-      this.count += 1;
+      this.word = this.word.slice(1, this.word.length) + this.word[0];
     },
   },
 };
 </script>
 
-<style>
-.rotate button {
-  padding : 3px, 5px;
+<style scoped>
+.word-container {
+  display : flex;
+  flex-direction : row;
+  justify-content : center;
+  align-items : center;
+}
+#word-input {
+  height : 14px;
+  padding : 4px;
+}
+#word-rotate, #word-notice {
+  padding : 2px 5px;
   margin-left : 10px;
 }
 </style>
