@@ -29,13 +29,13 @@ export default {
   },
   methods: {
     showAlert() {
-      /* eslint-disable */
       if (this.word === '') {
+        // eslint-disable-next-line no-alert
         alert('Enter Word');
       } else {
+        // eslint-disable-next-line no-alert
         alert(`${this.word} ${this.count}`);
       }
-      /* eslint-enable */
     },
     changeWord(e) {
       this.word = e.target.value;
