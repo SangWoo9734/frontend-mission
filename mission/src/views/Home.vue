@@ -4,11 +4,11 @@
     <HelloWorld msg="Welcome to Your Vue.js App"/>
 
     <div class='word-container'>
-      <input id='word-input' v-bind:value="word" v-on:input="changeWord" data-word/>
-      <button id='word-rotate' v-on:click="rotateWord">제출</button>
-      <button id='word-notice' v-on:click="changeCount">알림</button>
+      <input v-bind:value="word" v-on:input="changeWord" data-test='user-input'/>
+      <button id='word-rotate' v-on:click="rotateWord" data-test='rotate-word'>제출</button>
+      <button id='word-notice' v-on:click="changeCount" data-test='notice-count'>알림</button>
     </div>
-    <p class='result'>{{word}}</p>
+    <p class='result' data-test='user-input-window'>{{word}}</p>
   </div>
 </template>
 
