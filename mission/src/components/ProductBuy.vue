@@ -1,8 +1,8 @@
 <template>
-    <div id='product-buy' class='position-fixed'>
+    <div id='product-buy' class='position-fixed flex'>
         <button id='btn-cart' class='btn'>장바구니 담기</button>
         <button id='btn-buy' class='btn'>
-            <p>{{ comma(cost) }} 원</p>
+            <p>{{ costWithComma }} 원</p>
             <p>바로 구매</p>
         </button>
     </div>
@@ -21,25 +21,35 @@ export default {
       return String(val).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     },
   },
+  computed: {
+    costWithComma() {
+      return this.comma(this.cost);
+    },
+  },
 };
 </script>
 
 <style scoped>
 #product-buy {
   bottom: 0;
-  left: 0;
+  max-width:500px;
+  width: 100%;
   height: 60px;
   border-top: 0.5px solid lightgray;
   box-shadow: 0px -2px 3px 0px lightgray;
+  background: white;
 }
-#btn-cart {
-  width: 43%;
+.btn {
+  width: 45%;
   margin: 0 10px;
   height: 70%;
+  font-weight: bold;
+}
+#btn-cart {
+  font-size: 18px;
 }
 #btn-buy {
-  width: 43%;
-  margin: 0 10px;
   background : rgb(255, 192, 109);
+  font-size: 15px;
 }
 </style>
