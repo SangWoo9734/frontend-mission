@@ -1,14 +1,14 @@
 <template>
   <div id='product-cost-container' class='flex'>
     <div id='product-discount'>
-      <p data-test='product-discount-rate'>{{discountRate}}%</p>
+      <p v-if='discount.isDiscount' data-test='product-discount-rate'>{{ discount.rate }}%↘︎</p>
     </div>
     <div id='product-cost'>
-      <p v-if='discountRate > 0' data-test='product-cost-origin' class='cost-origin'>
-        {{ comma(cost) }}원
+      <p v-if='discount.isDiscount > 0' data-test='product-cost-origin' class='cost-origin'>
+        {{ costWithComma(cost) }}원
       </p>
       <p data-test='product-cost-discounted' class='cost-final'>
-        {{ comma(applyDiscount) }}원
+        {{ costWithComma(applyDiscount) }}원
       </p>
     </div>
   </div>
@@ -17,20 +17,21 @@
 <script>
 export default {
   name: 'ProductCost',
-  data() {
-    return {
-      cost: 30000,
-      discountRate: 15,
-    };
+  props: {
+    cost: Number,
+    discount: Object,
   },
   methods: {
-    comma(val) {
+    costWithComma(val) {
       return String(val).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     },
   },
   computed: {
     applyDiscount() {
-      return this.cost * (1 - this.discountRate / 100);
+      if (this.discount.isDiscount) {
+        return this.cost * (1 - this.discount.rate / 100);
+      }
+      return this.cost;
     },
   },
 };

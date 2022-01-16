@@ -1,16 +1,14 @@
 <template>
   <div id='product-image-container'>
-    <img :src="productUrl" alt="" id='product-image' class='item-center'>
+    <img :src="productImg" alt="" id='product-image' class='item-center'>
   </div>
 </template>
 
 <script>
 export default {
   name: '',
-  data() {
-    return {
-      productUrl: 'https://image.msscdn.net/images/goods_img/20190923/1163605/1163605_2_500.jpg',
-    };
+  props: {
+    productImg: String,
   },
 };
 </script>
@@ -18,8 +16,12 @@ export default {
 <style scoped>
 #product-image-container {
   width: 100%;
-  height: 100vw;
   position: relative;
+}
+#product-image-container:after {
+  content: "";
+  display: block;
+  padding-bottom: 100%;
 }
 #product-image {
   width: 90%;
