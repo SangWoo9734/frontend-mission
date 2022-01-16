@@ -1,17 +1,18 @@
 <template>
     <div id='product-container'>
       <!-- 상품 이미지 -->
-      <ProductImage />
-      <div id='product-seller-data' class='flex'>
-        <!-- 판매자 정보 -->
-        <ProductSeller />
-        <ProductCost />
+      <ProductImage :productImg='productData.product.imgUrl' />
+      <!-- 판매자 정보 -->
+      <ProductSeller :seller='productData.seller' />
+      <div id='product-data-detail' class='flex'>
+        <p>{{ productData.product.title }}</p>
+        <ProductCost :cost='productData.product.cost' :discount='productData.product.discount' />
       </div>
       <!-- 제품 설명 -->
-      <div v-html='productDescription' data-test='product-desription'></div>
+      <ProductDescription :description='productData.product.descriptionHTML' />
 
       <!-- 사용자 리뷰 -->
-      <ProductReview />
+      <ProductReview :userReviews='productData.reviews' />
     </div>
 </template>
 
@@ -19,52 +20,40 @@
 import ProductImage from './ProductImage.vue';
 import ProductSeller from './ProductSeller.vue';
 import ProductCost from './ProductCost.vue';
+import ProductDescription from './ProductDescription.vue';
 import ProductReview from './ProductReview.vue';
 
 export default {
   name: 'ProductInfo',
-  data() {
-    return {
-      isDiscount: true,
-      productDescription: '<h1>Hello</h1><p>This is NIKE Sweater</p>',
-    };
+  props: {
+    productData: Object,
   },
   components: {
+    ProductImage,
     ProductSeller,
     ProductCost,
-    ProductImage,
+    ProductDescription,
     ProductReview,
-  },
-  methods: {
-    comma(val) {
-      return String(val).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    },
-  },
-  computed: {
-    tagWithHashtag() {
-      const withHashtag = [];
-      this.tag.forEach((t) => {
-        withHashtag.push('#'.concat(t));
-      });
-      return withHashtag;
-    },
-    applyDiscount() {
-      return this.cost * (1 - this.discountRate / 100);
-    },
   },
 };
 </script>
 
 <style scoped>
 #product-container {
-  padding-top : 60px;
+  padding-top : 50px;
   width: 100%;
 }
-#product-seller-data {
+#product-data-detail {
   width: 100%;
   height: 60px;
   justify-content: space-between;
+  align-items: center;
   border-top: 1px solid lightgray;
   border-bottom: 1px solid lightgray;
+}
+#product-data-detail p{
+  font-weight: bold;
+  font-size: 20px;
+  padding-left: 15px;
 }
 </style>
