@@ -19,6 +19,8 @@ export default {
   height: 50px;
   border-bottom: 0.5px solid lightgray;
   box-shadow: 0px 2px 3px 0px lightgray;
+  background: white;
+  z-index: 10;
 }
 #navigation *{
   margin : 15px;
