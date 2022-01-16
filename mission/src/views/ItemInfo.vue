@@ -22,7 +22,7 @@ export default {
         product: {
           id: 1102323,
           imgUrl: 'https://image.msscdn.net/images/goods_img/20190923/1163605/1163605_2_500.jpg',
-          descritionHTML: '<h1>Hello. NIKE.</h1><p>This is NIKE Sweater</p><p>보다 저렴한 가격으로 만나보실 수 있습니다.</p>',
+          descriptionHTML: '<h1>Hello. NIKE.</h1><p>This is NIKE Sweater</p><p>보다 저렴한 가격으로 만나보실 수 있습니다.</p>',
           title: 'NIKE F/W Sweater',
           cost: 30000,
           discount: { isDiscount: true, rate: 15 },
