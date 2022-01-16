@@ -1,23 +1,23 @@
 body {
-  margin : 0;
+  margin: 0;
 }
 p {
-  margin : 0;
+  margin: 0;
 }
 .flex {
   display: flex;
   flex-direction: row;
 }
 .position-fixed {
-  position : fixed;
-  width : 100%;
+  position: fixed;
+  width: 100%;
   justify-content: space-between;
-  align-items : center;
+  align-items: center;
 }
 .btn {
-  border : none;
-  background : antiquewhite;
-  border-radius : 5px;
+  border: none;
+  background: antiquewhite;
+  border-radius: 5px;
   height: 70%;
 }
 .item-center {
@@ -25,4 +25,21 @@ p {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+.user-image {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  margin-right: 10px;
+}
+.user-image img {
+  height: 100%;
+}
+.detail-nav {
+  margin: 0;
+  margin-left: 15px;
+  padding: 3px 5px;
+  border-bottom: 2px solid black;
 }
