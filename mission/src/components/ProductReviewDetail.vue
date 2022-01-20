@@ -10,11 +10,11 @@
       <div id='product-review-comment'>
         <div id='product-review-rate'>⭐️ {{ review.rate }}</div>
         <div id='product-review-text'>{{ review.text }}</div>
-        <div id='product-review-react' class='flex'>
+      </div>
+      <div id='product-review-react' class='flex'>
           <button id='react-good' class='btn' @click='reaction("good")'>👍 {{ react.good }}</button>
           <button id='react-bad' class='btn' @click='reaction("bad")'>👎 {{ react.bad }}</button>
         </div>
-      </div>
     </div>
     <div id='product-review-image'>
       <img :src="review.reviewImg" alt="">
@@ -46,7 +46,7 @@ export default {
 <style scoped>
 #product-review-content {
   width: 95%;
-  height: 180px;
+  height: fit-content;
   margin: 10px;
   padding: 10px 0;
   border: 1px solid lightgray;
@@ -56,15 +56,15 @@ export default {
 }
 #product-review-info {
   width: 70%;
+  height: 100%;
   align-items: center;
   padding: 0 5px 0 10px;
   text-align:left;
 }
 #product-review-reviewer {
   align-items: center;
-  margin-bottom: 10px;
+  height: 20%;
   padding-bottom: 10px;
-  border-bottom: 1px solid lightgray;
 }
 #product-review-reviewer p{
   font-weight: bold;
@@ -73,6 +73,10 @@ export default {
   padding: 0 10px;
   font-size: 15px;
   font-weight: bold;
+}
+#product-review-comment {
+  min-height: 80px;
+  height: fit-content;
 }
 #product-review-text {
   padding: 10px;
@@ -97,10 +101,14 @@ export default {
   width: 90%;
   height: 90%;
 }
+#product-review-react {
+  margin-top: 10px;
+}
 #product-review-react button{
   font-size: 13px;
   margin-left: 5px;
   border: none;
+  background: none;
 }
 #react-good{
   color: blue;

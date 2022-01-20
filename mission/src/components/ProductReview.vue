@@ -4,7 +4,7 @@
       <h3 class='detail-nav'>Reviews</h3>
       <h2 id='average-rate'>⭐️ {{ averageRate }} <span>({{ reviewsLength }})</span></h2>
     </div>
-    <ProducReviewDetail v-for='(review, index) in userReviews' :key='index' :review='review'/>
+    <ProducReviewDetail v-for='review in userReviews' :key='review.id' :review='review'/>
   </div>
 </template>
 
