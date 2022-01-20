@@ -39,18 +39,21 @@ export default {
 
 <style scoped>
 #product-cost-container {
-    align-items: center;
-    padding: 0 15px;
+  justify-content: right;
+  align-items: center;
+  margin: 0;
+  padding: 0 15px 10px 15px;
+  border-bottom: 1px solid lightgray;
 }
 #product-cost {
-    text-align: right;
-    margin-left: 20px;
+  text-align: right;
+  margin-left: 20px;
 }
 #product-discount {
-    font-size: 24px;
-    font-weight: bold;
-    color: rgb(194, 0, 0);
-    padding-top: 20px;
+  font-size: 24px;
+  font-weight: bold;
+  color: rgb(194, 0, 0);
+  padding-top: 20px;
 }
 .cost-origin {
   text-decoration: line-through;
