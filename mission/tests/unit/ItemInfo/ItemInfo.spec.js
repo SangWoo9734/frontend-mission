@@ -92,21 +92,30 @@ describe('ProductInfo', () => {
       expect(wrapper.find('[data-test="user-name"]').exists()).toBe(true);
     });
     it('contains user tag', () => {
-      expect(wrapper.find('[data-test="user-name"]').exists()).toBe(true);
+      expect(wrapper.find('[data-test="user-tag"]').exists()).toBe(true);
     });
     it('add "#" front of each tag', () => {
-      expect(wrapper.vm.tagWithHashtag).toEqual(['#스포츠', '#러닝', '#기능성']);
+      expect(wrapper.find('[data-test="user-tag"]').text()).toEqual('#스포츠#러닝#기능성');
     });
   });
 
-  it('contains product title', () => {
-    wrapper = mount(ProductInfo, {
-      propsData: {
-        productData: testData,
-      },
+  describe('Product Title', () => {
+    beforeEach(() => {
+      wrapper = mount(ProductInfo, {
+        propsData: {
+          productData: testData,
+        },
+      });
     });
-    expect(wrapper.find('#product-data-detail').exists()).toBe(true);
+
+    it('contains product title', () => {
+      expect(wrapper.find('[data-test="product-title"]').exists()).toBe(true);
+    });
+    it('renders product title', async () => {
+      expect(wrapper.find('[data-test="product-title"]').text()).toEqual('NIKE F/W Sweater');
+    });
   });
+
   describe('ProductCost', () => {
     beforeEach(() => {
       wrapper = mount(ProductCost, {
@@ -137,14 +146,20 @@ describe('ProductInfo', () => {
   });
 
   describe('ProductDescription', () => {
-    it('contains product description', () => {
+    beforeEach(() => {
       wrapper = mount(ProductDescription, {
         propsData: {
-          description: testData.product.descriptionHTML,
+          description: '<p>Test Description</p>',
         },
       });
+    });
 
+    it('contains product description', () => {
       expect(wrapper.find('[data-test="product-desription"]').exists()).toBe(true);
+    });
+
+    it('renders right product description', () => {
+      expect(wrapper.find('[data-test="product-desription"]').text()).toEqual('Test Description');
     });
   });
 
@@ -161,10 +176,10 @@ describe('ProductInfo', () => {
       expect(wrapper.find('#average-rate').exists()).toBe(true);
     });
     it('contains right length of reviews', () => {
-      expect(wrapper.vm.reviewsLength).toEqual(2);
+      expect(wrapper.findAll('#product-review-content').length).toBe(2);
     });
     it('contains right average review rate', () => {
-      expect(wrapper.vm.averageRate).toEqual('4.38');
+      expect(wrapper.find('#average-rate').text()).toContain('4.38');
     });
   });
 
@@ -214,6 +229,6 @@ describe('Product Buy', () => {
     expect(wrapper.vm.applyDiscount).toEqual(25500);
   });
   it('contains right format of cost that includes ","', () => {
-    expect(wrapper.find('#btn-buy p').text()).toEqual('25,500원 구매');
+    expect(wrapper.find('#btn-buy p').text()).toContain('25,500');
   });
 });
