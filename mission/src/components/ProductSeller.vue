@@ -6,7 +6,7 @@
       <div id='user-info'>
         <p id='user-name' data-test='user-name'>{{ seller.userName }}</p>
         <p id='user-tag' data-test='user-tag'>
-          <span v-for='(tag, index) in tagWithHashtag' :key='index'>{{ tag }}</span>
+          <span v-for='(tag, index) in tagWithHashtag' :key='index' data-test='tag'>{{ tag }}</span>
         </p>
       </div>
     </div>
