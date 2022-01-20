@@ -5,9 +5,9 @@
       <!-- 판매자 정보 -->
       <ProductSeller :seller='productData.seller' />
       <div id='product-data-detail' class='flex'>
-        <p>{{ productData.product.title }}</p>
-        <ProductCost :cost='productData.product.cost' :discount='productData.product.discount' />
+        <p data-test='product-title'>{{ productData.product.title }}</p>
       </div>
+      <ProductCost :cost='productData.product.cost' :discount='productData.product.discount' />
       <!-- 제품 설명 -->
       <ProductDescription :description='productData.product.descriptionHTML' />
 
@@ -45,15 +45,12 @@ export default {
 }
 #product-data-detail {
   width: 100%;
-  height: 60px;
-  justify-content: space-between;
+  height: 50px;
   align-items: center;
-  border-top: 1px solid lightgray;
-  border-bottom: 1px solid lightgray;
 }
 #product-data-detail p{
   font-weight: bold;
-  font-size: 20px;
+  font-size: 24px;
   padding-left: 15px;
 }
 </style>
