@@ -3,17 +3,7 @@
     <!-- Header -->
     <TheHeader />
     <!-- SortButton -->
-    <div class='sort-btn-container flex' data-test='sort-btn'>
-      <div class='sort-btn-viewbox flex'>
-        <div class='sort-btn' id='sort-fixed-btn'>
-        <font-awesome-icon :icon="['fas', 'filter']" />
-        정렬
-        </div>
-        <div class='sort-btn' v-for='point in sortPoint' :key='point' @click='sortItem(point)'>
-          # {{ point }}
-        </div>
-      </div>
-    </div>
+    <ItemSort @sortItem='sortItem' />
     <!-- ItemList -->
     <div class='item-list' data-test='item-list'>
       <Item v-for='item in itemData' :key='item.id' :item='item' />
@@ -25,6 +15,7 @@
 
 <script>
 import TheHeader from '../components/ItemCommon/TheHeader.vue';
+import ItemSort from '../components/ItemList/ItemSort.vue';
 import Item from '../components/ItemList/Item.vue';
 import TheNavbar from '../components/ItemList/TheNavbar.vue';
 
@@ -41,7 +32,6 @@ export default {
           discount: { isDiscount: true, rate: 15 },
           userRate: [4.8, 4.3, 4.1, 4.5, 4.7],
           uploadData: '2022-01-01',
-          like: false,
         },
         {
           id: 1102323,
@@ -51,7 +41,6 @@ export default {
           discount: { isDiscount: true, rate: 10 },
           userRate: [4.4, 4.2, 3.7],
           uploadData: '2022-01-02',
-          like: false,
         },
         {
           id: 1102325,
@@ -61,7 +50,6 @@ export default {
           discount: { isDiscount: false, rate: 0 },
           userRate: [4.6, 4.5],
           uploadData: '2022-01-15',
-          like: false,
         },
         {
           id: 1102327,
@@ -71,7 +59,6 @@ export default {
           discount: { isDiscount: true, rate: 20 },
           userRate: [4.5, 4.2, 4.0, 3.9],
           uploadData: '2022-01-11',
-          like: false,
         },
         {
           id: 1102329,
@@ -81,14 +68,13 @@ export default {
           discount: { isDiscount: true, rate: 10 },
           userRate: [],
           uploadData: '2022-01-21',
-          like: false,
         },
       ],
-      sortPoint: ['최신순', '높은 할인율', '높은 평점순', '낮은 가격순', '높은 가격순', '리뷰 많은순'],
     };
   },
   components: {
     TheHeader,
+    ItemSort,
     Item,
     TheNavbar,
   },
