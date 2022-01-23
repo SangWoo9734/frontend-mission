@@ -1,7 +1,7 @@
 <template>
   <div id='item-info-page' class='flex'>
     <!-- 네비게이션 바 -->
-    <TheNavbar />
+    <TheHeader />
     <!-- 제품 상세 정보 -->
     <ProductInfo :productData='testData' />
     <!-- 제품 구매 -->
@@ -12,7 +12,7 @@
 <script>
 import ProductInfo from '../components/ProductInfo.vue';
 import ProductBuy from '../components/ProductBuy.vue';
-import TheNavbar from '../components/TheNavbar.vue';
+import TheHeader from '../components/ItemCommon/TheHeader.vue';
 
 export default {
   name: 'ItemInfoPage',
@@ -56,18 +56,10 @@ export default {
   components: {
     ProductInfo,
     ProductBuy,
-    TheNavbar,
+    TheHeader,
   },
 };
 </script>
 
 <style scoped>
-#item-info-page {
-  max-width: 500px;
-  width : 100%;
-  height : 100vh;
-  margin : auto;
-  flex-direction: column;
-  position: relative;
-}
 </style>
