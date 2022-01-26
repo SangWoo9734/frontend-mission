@@ -6,7 +6,17 @@
     <ItemSort @sortItem='sortItem' />
     <!-- ItemList -->
     <div class='item-list' data-test='item-list'>
-      <Item v-for='item in itemData' :key='item.id' :item='item' />
+      <Item v-for='item in itemData' :key='item.id'
+        :imgUrl= 'item.imgUrl'
+        :title= 'item.title'
+        :cost= 'item.cost'
+        :isDiscount= 'item.discount.isDiscount'
+        :discountRate= 'item.discount.rate'
+        :discountedCost= 'item.discountedCost'
+        :reviewLength= 'item.reviewLength'
+        :averageRate= 'item.averageRate'
+        :isNew= 'item.isNew'
+        data-test='item' />
     </div>
     <!-- Navbar -->
     <TheNavbar />
@@ -31,7 +41,7 @@ export default {
           cost: 30000,
           discount: { isDiscount: true, rate: 15 },
           userRate: [4.8, 4.3, 4.1, 4.5, 4.7],
-          uploadData: '2022-01-01',
+          uploadDate: '2022-01-01',
         },
         {
           id: 1102323,
@@ -40,7 +50,7 @@ export default {
           cost: 12000,
           discount: { isDiscount: true, rate: 10 },
           userRate: [4.4, 4.2, 3.7],
-          uploadData: '2022-01-02',
+          uploadDate: '2022-01-02',
         },
         {
           id: 1102325,
@@ -49,7 +59,7 @@ export default {
           cost: 89000,
           discount: { isDiscount: false, rate: 0 },
           userRate: [4.6, 4.5],
-          uploadData: '2022-01-15',
+          uploadDate: '2022-01-15',
         },
         {
           id: 1102327,
@@ -67,7 +77,7 @@ export default {
           cost: 39000,
           discount: { isDiscount: true, rate: 10 },
           userRate: [],
-          uploadData: '2022-01-21',
+          uploadDate: '2022-01-21',
         },
       ],
     };
@@ -124,7 +134,7 @@ export default {
         discountedCost: data.cost * (1 - data.discount.rate / 100),
         reviewLength: userReviewLength,
         averageRate: userReviewLength !== 0 ? (rateSum / userReviewLength).toFixed(2) : '0.00',
-        isNew: (Date.now() - new Date(data.uploadData).getTime()) / (1000 * 3600 * 24) < 7,
+        isNew: (Date.now() - new Date(data.uploadDate).getTime()) / (1000 * 3600 * 24) < 7,
       });
     });
   },
@@ -132,13 +142,13 @@ export default {
 </script>
 
 <style scoped>
+#item-list-page{
+  padding-top: 60px;
+}
 .item-list {
   padding : 10px 7px 100px 7px;
-}
-.item-list:after {
-    content: '';
-    display: block;
-    clear: both;
+  display: grid;
+  grid-template-columns: 50% 50%;
 }
 .sort-btn-container{
   width: 100%;
