@@ -56,7 +56,7 @@ export default {
   bottom: 0;
   max-width: 500px;
   width:100%;
-  height: 60px;
+  height: 70px;
   background: white;
   box-shadow: 0 0 7px lightgray;
   z-index: 10;
@@ -70,8 +70,6 @@ export default {
   justify-content: center;
   align-items: center;
   color: rgb(160, 160, 160);
-  border-right: 1px solid lightgray;
-  border-left: 1px solid lightgray;
 }
 .navigation-btn svg {
   font-size: 24px;
