@@ -79,21 +79,7 @@ describe('ItemList', () => {
       expect(item.find('[data-test="item-image"]').exists()).toBeTruthy();
       expect(item.find('[data-test="item-title"]').exists()).toBeTruthy();
       expect(item.find('[data-test="item-averagerate"]').exists()).toBeTruthy();
-
-      if (item.vm.discountRate !== 0) {
-        expect(item.find('[data-test="item-discount-rate"]').exists()).toBeTruthy();
-        expect(item.find('[data-test="item-origin-cost"]').exists()).toBeTruthy();
-      } else {
-        expect(item.find('[data-test="item-discount-rate"]').exists()).toBeFalsy();
-        expect(item.find('[data-test="item-origin-cost"]').exists()).toBeFalsy();
-      }
       expect(item.find('[data-test="item-discounted-cost"]').exists()).toBeTruthy();
-
-      if (item.vm.isNew) {
-        expect(item.find('[data-test="item-new"]').exists()).toBeTruthy();
-      } else {
-        expect(item.find('[data-test="item-new"]').exists()).toBeFalsy();
-      }
     });
   });
 });
