@@ -5,8 +5,8 @@
       <font-awesome-icon :icon="['fas', 'filter']" />
       정렬
       </div>
-      <div class='sort-btn' v-for='point in sortPoints' :key='point'
-        @click='setSortPoint(point)'>
+      <div class='sort-btn' v-for='(point, i) in sortPoints' :key='point'
+        @click='setSortPoint(point)'  :data-test='`btn-${i}`'>
         # {{ point }}
       </div>
     </div>
