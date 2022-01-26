@@ -1,71 +1,99 @@
 import { mount } from '@vue/test-utils';
+
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { fas } from '@fortawesome/free-solid-svg-icons';
+import { far } from '@fortawesome/free-regular-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+
 import ItemInfoPage from '@/views/ItemList.vue';
+
+library.add(fas, far);
 
 let wrapper;
 
-describe('ItemListPage', () => {
+const testData = [
+  {
+    id: 1102321,
+    imgUrl: '',
+    title: 'A',
+    cost: 30000,
+    discount: { isDiscount: true, rate: 15 },
+    userRate: [4.8, 4.3, 4.1, 4.5, 4.7],
+    uploadDate: '2022-01-02',
+  },
+  {
+    id: 1102320,
+    imgUrl: '',
+    title: 'B',
+    cost: 12000,
+    discount: { isDiscount: true, rate: 10 },
+    userRate: [4.4, 4.2, 3.7],
+    uploadDate: '2022-01-01',
+  },
+  {
+    id: 1102325,
+    imgUrl: '',
+    title: 'C',
+    cost: 89000,
+    discount: { isDiscount: false, rate: 0 },
+    userRate: [4.6, 4.5],
+    uploadDate: '2022-01-15',
+  },
+];
+
+describe('ItemList', () => {
   beforeEach(() => {
-    wrapper = mount(ItemInfoPage);
+    wrapper = mount(ItemInfoPage, {
+      global: {
+        stubs: { FontAwesomeIcon },
+      },
+    });
   });
 
   it('renders ItemListPage', () => {
     expect(wrapper.find('#item-list-page').exists()).toBeTruthy();
   });
 
-  describe('Header', () => {
-    it('contains header', () => {
-      expect(wrapper.find('#header').exists()).toBeTruthy();
+  it('render each items', async () => {
+    await wrapper.setData({
+      itemData: testData,
     });
 
-    it('renders header titles', () => {
-      expect(wrapper.find('[data-test="header"]').text()).toEqual('🦁 LionAbly');
-    });
-  });
+    const allItems = wrapper.findAllComponents('[data-test="item"]');
 
-  describe('Item Sort', () => {
-    it('contiains sort points', () => {
-      expect(wrapper.find('[data-test="sort-btn"]').exists()).toBeTruthy();
-    });
+    expect(allItems.length).toEqual(testData.length);
 
-    it('renders several buttons', async () => {
-      await wrapper.setData({
-        sortPoint: ['기준 1', '기준 2', '기준 3'],
-      });
-
-      expect(wrapper.findAll('.sort-btn').length).toBe(4);
-    });
-
-    it('renders button name with each points', async () => {
-      await wrapper.setData({
-        sortPoint: ['기준 1', '기준 2', '기준 3'],
-      });
-
-      expect(wrapper.find('[data-test="sort-btn"]').text()).toBe('정렬  # 기준 1 # 기준 2 # 기준 3');
+    allItems.forEach((item) => {
+      expect(item.exists()).toBeTruthy();
     });
   });
 
-  describe('Item List', () => {
-    it('contains item list', () => {
-      expect(wrapper.find('[data-test="item-list"]').exists()).toBeTruthy();
-    });
-  });
-
-  describe('Navigation Bar', () => {
-    it('renders navbar', () => {
-      expect(wrapper.find('#navigation').exists()).toBeTruthy();
+  it('render each items', async () => {
+    await wrapper.setData({
+      itemData: testData,
     });
 
-    it('contains 4 buttons', () => {
-      expect(wrapper.findAll('.navigation-btn').length).toBe(4);
-    });
+    const allItems = wrapper.findAllComponents('[data-test="item"]');
 
-    it('renders 4 buttons', () => {
-      const buttonContents = ['Home', 'Like', 'Cart', 'My Page'];
-      const buttons = wrapper.findAll('.navigation-button');
+    allItems.forEach((item) => {
+      expect(item.find('[data-test="item-image"]').exists()).toBeTruthy();
+      expect(item.find('[data-test="item-title"]').exists()).toBeTruthy();
+      expect(item.find('[data-test="item-averagerate"]').exists()).toBeTruthy();
 
-      buttons.forEach((b, i) => {
-        expect(b.text()).toEqual(buttonContents[i]);
-      });
+      if (item.vm.discountRate !== 0) {
+        expect(item.find('[data-test="item-discount-rate"]').exists()).toBeTruthy();
+        expect(item.find('[data-test="item-origin-cost"]').exists()).toBeTruthy();
+      } else {
+        expect(item.find('[data-test="item-discount-rate"]').exists()).toBeFalsy();
+        expect(item.find('[data-test="item-origin-cost"]').exists()).toBeFalsy();
+      }
+      expect(item.find('[data-test="item-discounted-cost"]').exists()).toBeTruthy();
+
+      if (item.vm.isNew) {
+        expect(item.find('[data-test="item-new"]').exists()).toBeTruthy();
+      } else {
+        expect(item.find('[data-test="item-new"]').exists()).toBeFalsy();
+      }
     });
   });
 });
