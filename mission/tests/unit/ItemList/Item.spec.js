@@ -4,6 +4,7 @@ import Item from '@/components/ItemList/Item.vue';
 describe('Item', () => {
   const testUrl = 'www.google.com';
   const testTitle = 'TestTitle';
+  const testShortDescription = 'Test Description';
   const testCost = 30000;
   const testDiscountTrue = { isDiscount: true, rate: 10 };
   const testDiscountFalse = { isDiscount: false, rate: 0 };
@@ -20,6 +21,7 @@ describe('Item', () => {
       propsData: {
         imgUrl: testUrl,
         title: testTitle,
+        shortDescription: testShortDescription,
         cost: testCost,
         isDiscount: testDiscountTrue.isDiscount,
         discountRate: testDiscountTrue.rate,
@@ -84,6 +86,23 @@ describe('Item', () => {
 
       expect(wrapper.find('[data-test="item-averagerate"]').text()).toContain('0.00');
       expect(wrapper.find('[data-test="item-averagerate"]').text()).toContain('(0)');
+    });
+  });
+  describe('Item Short Description', () => {
+    it('contains short description about each item', () => {
+      expect(wrapper.find('[data-test="item-description"]').exists()).toBeTruthy();
+    });
+
+    it('render right description', () => {
+      expect(wrapper.find('[data-test="item-description"]').text()).toEqual(testShortDescription);
+    });
+
+    it('renders empty string if data not contain description', async () => {
+      await wrapper.setProps({
+        shortDescription: '',
+      });
+
+      expect(wrapper.find('[data-test="item-description"]').text()).toEqual('');
     });
   });
 
