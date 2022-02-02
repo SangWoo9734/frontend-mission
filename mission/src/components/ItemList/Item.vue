@@ -5,9 +5,12 @@
         class='item-image item-center width-fit' data-test='item-image'>
     </div>
     <div class='item-info-container'>
-      <div class='item-title bold' data-test='item-title'>{{ title }}</div>
+      <div class='item-title text-shorten bold' data-test='item-title'>{{ title }}</div>
       <div class='item-averagerate' data-test='item-averagerate'>
         ⭐️ {{ averageRate }} ({{ reviewLength }})
+      </div>
+      <div class='item-description text-shorten' data-test='item-description'>
+        <p>{{ shortDescription }}</p>
       </div>
       <div v-if='isDiscount' class='item-discount flex'>
         <p class='item-discount-rate bold' data-test='item-discount-rate'>
@@ -36,6 +39,7 @@ export default {
   props: {
     imgUrl: { type: String, default: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-nOAglpmejsvQmil3kr19lwURHplsMvhv5A&usqp=CAU' },
     title: { type: String, default: '' },
+    shortDescription: { type: String, default: '' },
     cost: { type: Number, default: 0 },
     isDiscount: { type: Boolean, default: false },
     discountRate: { type: Number, default: 0 },
@@ -79,17 +83,13 @@ export default {
 }
 .item-info-container {
   position:relative;
-  min-height: 130px;
+  min-height: 150px;
   height:fit-content;
   padding: 0 10px;
   text-align: left;
 }
 .item-title {
   font-size: 18px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  word-break:break-all;
 }
 .item-averagerate{
   font-size: 15px;
@@ -99,11 +99,15 @@ export default {
   height: 20px;
   justify-content: space-between;
   align-items: baseline;
-  margin-top: 15px;
+  margin-top: 5px;
 }
 .item-discount-rate {
   font-size: 20px;
   color: red;
+}
+.item-description {
+  margin-top: 5px;
+  color: rgb(170, 170, 170)
 }
 .item-original-cost {
   color: rgb(170, 170, 170);
