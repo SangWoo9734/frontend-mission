@@ -1,11 +1,35 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import ItemListPage from '@/views/ItemList.vue';
+import ItemInfo from '@/views/ItemInfo.vue';
+import Cart from '@/views/Cart.vue';
+import Wish from '@/views/Wish.vue';
+import MyPage from '@/views/MyPage.vue';
 
 const routes = [
   {
-    path: '/',
-    name: 'Home',
+    path: '/item',
+    name: 'item',
     component: ItemListPage,
+  },
+  {
+    path: '/item/:id',
+    name: 'ItemInfo',
+    component: ItemInfo,
+  },
+  {
+    path: '/cart',
+    name: 'cart',
+    component: Cart,
+  },
+  {
+    path: '/wish',
+    name: 'wish',
+    component: Wish,
+  },
+  {
+    path: '/mypage',
+    name: 'mypage',
+    component: MyPage,
   },
   {
     path: '/about',
