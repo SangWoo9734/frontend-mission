@@ -1,14 +1,16 @@
 <template>
   <div id='product-cost-container' class='flex'>
     <div id='product-discount'>
-      <p v-if='discount.isDiscount' data-test='product-discount-rate'>{{ discount.rate }}%↘︎</p>
+      <p v-if='originalPrice != price' data-test='product-discount-rate'>
+        {{ calculateDiscountRate }}%↘︎
+      </p>
     </div>
     <div id='product-cost'>
-      <p v-if='discount.isDiscount > 0' data-test='product-cost-origin' class='cost-origin'>
-        {{ costWithComma(cost) }}원
+      <p v-if='originalPrice != price' data-test='product-cost-origin' class='cost-origin'>
+        {{ commaWithOriginalPrice }}원
       </p>
       <p data-test='product-cost-discounted' class='cost-final'>
-        {{ costWithComma(applyDiscount) }}원
+        {{ commaWithPrice }}원
       </p>
     </div>
   </div>
@@ -18,20 +20,18 @@
 export default {
   name: 'ProductCost',
   props: {
-    cost: Number,
-    discount: Object,
-  },
-  methods: {
-    costWithComma(val) {
-      return String(val).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    },
+    originalPrice: { type: Number, default: 0 },
+    price: { type: Number, default: 0 },
   },
   computed: {
-    applyDiscount() {
-      if (this.discount.isDiscount) {
-        return this.cost * (1 - this.discount.rate / 100);
-      }
-      return this.cost;
+    commaWithOriginalPrice() {
+      return this.originalPrice.toLocaleString('ko-KR');
+    },
+    commaWithPrice() {
+      return this.price.toLocaleString('ko-KR');
+    },
+    calculateDiscountRate() {
+      return ((1 - (this.price / this.originalPrice)) * 100).toFixed(0).toLocaleString('ko-KR');
     },
   },
 };

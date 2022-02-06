@@ -2,7 +2,7 @@
     <div id='product-buy' class='position-fixed flex'>
         <button id='btn-cart' class='btn'>장바구니 담기</button>
         <button id='btn-buy' class='btn'>
-            <p>{{ costWithComma(applyDiscount) }}원 구매</p>
+            <p>{{ commaWithPrice }}원 구매</p>
         </button>
     </div>
 </template>
@@ -11,20 +11,11 @@
 export default {
   name: 'ProductBuy',
   props: {
-    cost: Number,
-    discount: Object,
-  },
-  methods: {
-    costWithComma(val) {
-      return String(val).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    },
+    price: { type: Number, default: 0 },
   },
   computed: {
-    applyDiscount() {
-      if (this.discount.isDiscount) {
-        return this.cost * (1 - this.discount.rate / 100);
-      }
-      return this.cost;
+    commaWithPrice() {
+      return this.price.toLocaleString('ko-KR');
     },
   },
 };

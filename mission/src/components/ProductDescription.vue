@@ -11,7 +11,7 @@
 export default {
   name: 'ProductDescription',
   props: {
-    description: String,
+    description: { type: String, default: '' },
   },
 };
 </script>

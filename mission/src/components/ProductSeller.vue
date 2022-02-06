@@ -1,30 +1,41 @@
 <template>
     <div id='user-info-container' class='flex'>
       <div class='user-image'>
-        <img :src="seller.imgUrl" alt="" class='item-center' data-test='user-image'>
+        <img :src='sellerInfo.profile_image' alt='' class='item-center' data-test='user-image'>
       </div>
       <div id='user-info'>
-        <p id='user-name' data-test='user-name'>{{ seller.userName }}</p>
+        <p id='user-name' data-test='user-name'>{{ sellerInfo.name }}</p>
         <p id='user-tag' data-test='user-tag'>
-          <span v-for='(tag, index) in tagWithHashtag' :key='index' data-test='tag'>{{ tag }}</span>
+          <span v-for='(tag, index) in sellerInfo.hash_tags' :key='index' data-test='tag'>
+            #{{ tag }}
+          </span>
         </p>
       </div>
     </div>
 </template>
 
 <script>
+import Repository from '../repositories/RepositoryFactory';
+
+const ItemRepository = Repository.get('items');
+
 export default {
   name: 'ProductSeller',
-  props: {
-    seller: Object,
+  data() {
+    return {
+      sellerInfo: {},
+    };
   },
-  computed: {
-    tagWithHashtag() {
-      const withHashtag = [];
-      this.seller.tag.forEach((t) => {
-        withHashtag.push('#'.concat(t));
+  created() {
+    this.getSellerInfo(this.$route.params.id)
+      .then((result) => {
+        this.sellerInfo = result;
       });
-      return withHashtag;
+  },
+  methods: {
+    async getSellerInfo(id) {
+      const result = await ItemRepository.getItemInfo(id);
+      return result.data.item.seller;
     },
   },
 };

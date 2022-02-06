@@ -2,33 +2,44 @@
   <div id='product-review-container'>
     <div id='product-review-nav' class='flex'>
       <h3 class='detail-nav'>Reviews</h3>
-      <h2 id='average-rate'>⭐️ {{ averageRate }} <span>({{ reviewsLength }})</span></h2>
     </div>
-    <ProducReviewDetail v-for='review in userReviews' :key='review.id' :review='review'/>
+    <ProducReviewDetail v-for='review in userReview' :key='review.review_no'
+      :content= 'review.content'
+      :created= 'review.created'
+      :image= 'review.img'
+      :likesCount= 'review.likes_count'
+      :title= 'review.title'
+      :writer= 'review.writer'
+    />
   </div>
 </template>
 
 <script>
 import ProducReviewDetail from './ProductReviewDetail.vue';
+import Repository from '../repositories/RepositoryFactory';
+
+const ItemRepository = Repository.get('items');
 
 export default {
   name: 'ProductReview.vue',
-  props: {
-    userReviews: Array,
+  data() {
+    return {
+      userReview: [],
+    };
   },
   components: {
     ProducReviewDetail,
   },
-  computed: {
-    reviewsLength() {
-      return this.userReviews.length;
-    },
-    averageRate() {
-      let rateSum = 0;
-      this.userReviews.forEach((r) => {
-        rateSum += r.rate;
+  created() {
+    this.getReviewInfo(this.$route.params.id)
+      .then((result) => {
+        this.userReview = result;
       });
-      return (rateSum / this.reviewsLength).toFixed(2);
+  },
+  methods: {
+    async getReviewInfo(id) {
+      const result = await ItemRepository.getItemInfo(id);
+      return result.data.item.reviews;
     },
   },
 };
@@ -38,7 +49,7 @@ export default {
 #product-review-container {
   width: 100%;
   margin: 20px 0;
-  padding-bottom: 50px;
+  padding-bottom: 70px;
 }
 #product-review-nav {
   height: 60px;
