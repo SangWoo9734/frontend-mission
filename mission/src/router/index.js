@@ -10,26 +10,31 @@ const routes = [
     path: '/item',
     name: 'item',
     component: ItemListPage,
+    props: true,
   },
   {
     path: '/item/:id',
     name: 'ItemInfo',
     component: ItemInfo,
+    props: true,
   },
   {
     path: '/cart',
     name: 'cart',
     component: Cart,
+    props: true,
   },
   {
     path: '/wish',
     name: 'wish',
     component: Wish,
+    props: true,
   },
   {
     path: '/mypage',
     name: 'mypage',
     component: MyPage,
+    props: true,
   },
   {
     path: '/about',
