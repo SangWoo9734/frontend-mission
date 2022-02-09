@@ -1,16 +1,20 @@
 <template>
-  <div id='navigation' class='position-fixed flex' data-test='nav-button'>
-      <div v-for='m in menu' :key='m.name'
-        :class='isSelected(m.select)' @click='selectMenu(m.route)'>
+  <div id='navigation' class='position-fixed flex'>
+      <router-link v-for='m in menu' :key='m.name'
+        :class='isSelected(m.route)' :to='`/${m.route}`'
+        :data-test='`nav-button-${m.route}`' >
         <font-awesome-icon :icon='m.icon' />
-        <p class='navigation-btn-title'>{{ m.name }}</p>
-      </div>
+        <p class='navigation-btn-title' data-test='nav-button-title'>{{ m.name }}</p>
+      </router-link>
     </div>
 </template>
 
 <script>
 export default {
   name: 'TheNavbar',
+  props: {
+    state: { type: String, default: '' },
+  },
   data() {
     return {
       nowSelected: 'item',
@@ -19,25 +23,21 @@ export default {
           name: 'Home',
           route: 'item',
           icon: 'home',
-          select: true,
         },
         wish: {
           name: 'Like',
           route: 'wish',
           icon: 'heart',
-          select: false,
         },
         cart: {
           name: 'Cart',
           route: 'cart',
           icon: 'shopping-cart',
-          select: false,
         },
         mypage: {
           name: 'MyPage',
           route: 'mypage',
           icon: 'user',
-          select: false,
         },
       },
     };
@@ -47,14 +47,10 @@ export default {
       this.menu[this.nowSelected].select = false;
       this.menu[menuName].select = true;
       this.nowSelected = menuName;
-      this.$router.push({ name: menuName });
     },
-    isSelected(select) {
-      return select ? 'navigation-btn flex selectedMenu' : 'navigation-btn flex';
+    isSelected(route) {
+      return this.state === route ? 'navigation-btn flex selectedMenu' : 'navigation-btn flex';
     },
-  },
-  created() {
-    this.selectMenu(window.location.href.split('/')[3]);
   },
 };
 </script>
