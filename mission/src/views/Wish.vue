@@ -1,5 +1,5 @@
 <template>
-  <div id='wish' class='container'>
+  <div v-if='!loading' id='wish' class='container'>
     <!-- 하위 헤더 -->
     <div class='sub-navbar wish-navbar flex'>
       <h2 class='sub-navbar-title' data-test='wish-title'>❤️ Like</h2>
@@ -17,24 +17,32 @@
       />
     </div>
   </div>
+
+  <Circle v-else class='loading item-center' data-test='loading' />
+  <TheNavbar :state='"wish"' />
 </template>
 
 <script>
+import Circle from '../components/ItemCommon/Circle.vue';
 import WishItem from '../components/Wish/WishItem.vue';
+import TheNavbar from '../components/ItemCommon/TheNavbar.vue';
 
 import Repository from '../repositories/RepositoryFactory';
 
-const ItemRepository = Repository.get('items');
+const WishRepository = Repository.get('wish');
 
 export default {
   name: 'Wish',
   data() {
     return {
+      loading: true,
       wish: [],
     };
   },
   components: {
+    Circle,
     WishItem,
+    TheNavbar,
   },
   computed: {
     countWish() {
@@ -43,18 +51,20 @@ export default {
   },
   methods: {
     async getWishInfo() {
-      const result = await ItemRepository.getWish();
-      return result.data.items;
+      const result = await WishRepository.getWish();
+      if (result.status === 200) {
+        this.wish = result.data.items;
+        this.loading = false;
+      } else {
+        console.log(result);
+      }
     },
     goItemInfo(itemId) {
       this.$router.push({ name: 'ItemInfo', params: { id: itemId } });
     },
   },
   created() {
-    this.getWishInfo()
-      .then((result) => {
-        this.wish = result;
-      });
+    this.getWishInfo();
   },
 };
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div id='mypage'>
+  <div v-if='!loading' id='mypage'>
     <div class='sub-navbar flex'>
       <h2 class='sub-navbar-title' data-test='user-title'>👦🏻 My Page</h2>
     </div>
@@ -22,34 +22,45 @@
       <p class='mypage-tool'><font-awesome-icon icon='sign-out-alt' /> 로그아웃</p>
       <p class='mypage-tool'><font-awesome-icon icon='cog' /> 설정</p>
     </div>
-    <div></div>
   </div>
+
+  <Circle v-else class='loading item-center' data-test='loading'/>
+  <TheNavbar :state='"mypage"' />
 </template>
 
 <script>
+import Circle from '../components/ItemCommon/Circle.vue';
 import Repository from '../repositories/RepositoryFactory';
+import TheNavbar from '../components/ItemCommon/TheNavbar.vue';
 
-const ItemRepository = Repository.get('items');
+const UserRepository = Repository.get('user');
 
 export default {
   name: 'MyPage',
+  components: {
+    Circle,
+    TheNavbar,
+  },
   data() {
     return {
+      loading: true,
       user: {},
       defaultImage: 'https://us.123rf.com/450wm/tuktukdesign/tuktukdesign1608/tuktukdesign160800043/61010830-user-icon-man-profile-businessman-avatar-person-glyph-vector-illustration.jpg?ver=6',
     };
   },
   methods: {
-    async getWishInfo() {
-      const result = await ItemRepository.getInfo();
-      return result.data;
+    async getUserInfo() {
+      const result = await UserRepository.getInfo();
+      if (result.status === 200) {
+        this.user = result.data;
+        this.loading = false;
+      } else {
+        console.log(result);
+      }
     },
   },
   created() {
-    this.getWishInfo()
-      .then((result) => {
-        this.user = result;
-      });
+    this.getUserInfo();
   },
 };
 </script>

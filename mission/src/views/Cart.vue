@@ -1,5 +1,5 @@
 <template>
-  <div id='cart' class='container'>
+  <div v-if='!loading' id='cart' class='container'>
     <!-- 하위 헤더 -->
     <div class='sub-navbar flex'>
       <h2 class='sub-navbar-title' data-test='cart-title'>🛒 Cart</h2>
@@ -28,22 +28,30 @@
       <button class='cart-order-btn bold'>주문하기</button>
     </div>
   </div>
+
+  <Circle v-else class='loading item-center' data-test='loading' />
+  <TheNavbar :state='"cart"' />
 </template>
 
 <script>
+import Circle from '../components/ItemCommon/Circle.vue';
 import CartItem from '../components/Cart/CartItem.vue';
+import TheNavbar from '../components/ItemCommon/TheNavbar.vue';
 
 import Repository from '../repositories/RepositoryFactory';
 
-const ItemRepository = Repository.get('items');
+const CartRepository = Repository.get('cart');
 
 export default {
   name: 'Cart',
   components: {
     CartItem,
+    Circle,
+    TheNavbar,
   },
   data() {
     return {
+      loading: true,
       cart: [],
       quantity: {},
     };
@@ -67,8 +75,17 @@ export default {
   },
   methods: {
     async getCartInfo() {
-      const result = await ItemRepository.getCart();
-      return result.data.cart_item;
+      const result = await CartRepository.getCart();
+      if (result.status === 200) {
+        result.data.cart_item.forEach((item) => {
+          this.cart.push(Object.assign(item, {
+            quantity: 1,
+          }));
+        });
+        this.loading = false;
+      } else {
+        console.log(result);
+      }
     },
     addQuantity(id) {
       const target = this.cart.find((item) => item.product_no === id);
@@ -80,14 +97,7 @@ export default {
     },
   },
   created() {
-    this.getCartInfo()
-      .then((result) => {
-        result.forEach((item) => {
-          this.cart.push(Object.assign(item, {
-            quantity: 1,
-          }));
-        });
-      });
+    this.getCartInfo();
   },
 };
 </script>
