@@ -76,3 +76,6 @@ button:hover {
   margin: 0;
   padding: 5px 10px;
 }
+.loading {
+  width: 70px;
+}
