@@ -1,6 +1,4 @@
-import { mount } from '@vue/test-utils';
-import ItemInfoPage from '@/views/ItemInfo.vue';
-import TheHeader from '@/components/ItemCommon/TheHeader.vue';
+import { flushPromises, mount } from '@vue/test-utils';
 import ProductInfo from '@/components/ProductInfo.vue';
 import ProductImage from '@/components/ProductImage.vue';
 import ProductSeller from '@/components/ProductSeller.vue';
@@ -9,60 +7,76 @@ import ProductDescription from '@/components/ProductDescription.vue';
 import ProductReview from '@/components/ProductReview.vue';
 import ProductReviewDetail from '@/components/ProductReviewDetail.vue';
 import ProductBuy from '@/components/ProductBuy.vue';
+import ItemInfo from '@/views/ItemInfo.vue';
+
+import ItemAPI from '@/repositories/ItemRepository';
 
 let wrapper;
 
 const testData = {
-  product: {
-    id: 1102323,
-    imgUrl: 'https://image.msscdn.net/images/goods_img/20190923/1163605/1163605_2_500.jpg',
-    descriptionHTML:
-      '<h1>Hello. NIKE.</h1><p>This is NIKE Sweater</p><p>보다 저렴한 가격으로 만나보실 수 있습니다.</p>',
-    title: 'NIKE F/W Sweater',
-    cost: 30000,
-    discount: { isDiscount: true, rate: 15 },
-  },
+  id: 'psu8430',
+  image: 'https://image.msscdn.net/images/goods_img/20190923/1163605/1163605_2_500.jpg',
+  description:
+    '<h1>Hello. NIKE.</h1><p>This is NIKE Sweater</p><p>보다 저렴한 가격으로 만나보실 수 있습니다.</p>',
+  name: 'NIKE F/W Sweater',
+  originalPrice: 30000,
+  price: 20000,
   seller: {
-    userName: 'NIKE Offical',
-    imgUrl: 'https://c.static-nike.com/a/images/w_1920,c_limit/bzl2wmsfh7kgdkufrrjq/image.jpg',
-    tag: ['스포츠', '러닝', '기능성'],
+    name: 'NIKE Offical',
+    profile_image: 'https://c.static-nike.com/a/images/w_1920,c_limit/bzl2wmsfh7kgdkufrrjq/image.jpg',
+    hash_tags: ['스포츠', '러닝', '기능성'],
   },
   reviews: [
     {
       id: 0,
-      userImg: 'https://seeklogo.com/images/S/starbucks-logo-BFBFE6C3A3-seeklogo.com.png',
+      image: 'https://seeklogo.com/images/S/starbucks-logo-BFBFE6C3A3-seeklogo.com.png',
       reviewImg:
         'https://static.coupangcdn.com/image/vendor_inventory/f1b3/4a0c1ccb435200d7cc52e33f158cf100b4bfa35800ef96bacecc5a36488b.jpg',
-      userNickname: '스타벅스',
-      rate: 4.5,
-      text: '사이즈가 아주 잘 맞습니다. 컬러도 사진과 아주 유사합니다. 만족스럽습니다',
-    },
-    {
-      id: 1,
-      userImg: 'https://cdn.britannica.com/94/193794-050-0FB7060D/Adidas-logo.jpg',
-      reviewImg: 'https://image.msscdn.net/images/goods_img/20190923/1163133/1163133_1_500.jpg',
-      userNickname: '아디다스',
-      rate: 4.25,
-      text: '원하던 디자인이어서 만족스럽습니다',
+      writer: '스타벅스',
+      likesCount: 7,
+      created: '2022-01-01',
+      title: '사이즈가 아주 잘 맞습니다. 컬러도 사진과 아주 유사합니다. 만족스럽습니다',
     },
   ],
 };
 
+const response = {
+  data: { item: testData },
+};
+
+ItemAPI.getItemInfo = jest.fn().mockResolvedValue(response);
+
 describe('ItemInfoPage', () => {
-  it('renders ItemInfoPage', () => {
-    wrapper = mount(ItemInfoPage);
-
-    expect(wrapper.find('#item-info-page').exists()).toBe(true);
-  });
-});
-
-describe('TheHeader', () => {
   beforeEach(() => {
-    wrapper = mount(TheHeader);
+    wrapper = mount(ItemInfo);
+  });
+  it('renders ItemInfoPage', async () => {
+    await wrapper.setData({
+      loading: false,
+    });
+    expect(wrapper.find('#item-info-page').exists()).toBeTruthy();
   });
 
-  it('contains navigation bar', () => {
-    expect(wrapper.find('#header').exists()).toBe(true);
+  it('ItemAPI was called', async () => {
+    await flushPromises();
+
+    expect(ItemAPI.getItemInfo).toHaveBeenCalled();
+  });
+
+  it('render loading when loading state is false', async () => {
+    await wrapper.setData({
+      loading: false,
+    });
+
+    expect(wrapper.find('[data-test="loading"]').exists()).toBeFalsy();
+  });
+
+  it('render loading when loading state is true', async () => {
+    await wrapper.setData({
+      loading: true,
+    });
+
+    expect(wrapper.find('[data-test="loading"]').exists()).toBeTruthy();
   });
 });
 
@@ -79,7 +93,9 @@ describe('ProductInfo', () => {
     beforeEach(() => {
       wrapper = mount(ProductSeller, {
         propsData: {
-          seller: testData.seller,
+          hash_tags: testData.seller.hash_tags,
+          name: testData.seller.name,
+          profile_image: testData.seller.profile_image,
         },
       });
     });
@@ -94,7 +110,7 @@ describe('ProductInfo', () => {
       expect(wrapper.find('[data-test="user-tag"]').exists()).toBe(true);
     });
     it('add "#" front of each tag', () => {
-      expect(wrapper.find('[data-test="user-tag"]').text()).toEqual('#스포츠#러닝#기능성');
+      expect(wrapper.find('[data-test="user-tag"]').text()).toEqual('#스포츠 #러닝 #기능성');
     });
   });
 
@@ -102,7 +118,7 @@ describe('ProductInfo', () => {
     beforeEach(() => {
       wrapper = mount(ProductInfo, {
         propsData: {
-          productData: testData,
+          item_name: testData.name,
         },
       });
     });
@@ -119,8 +135,8 @@ describe('ProductInfo', () => {
     beforeEach(() => {
       wrapper = mount(ProductCost, {
         propsData: {
-          cost: testData.product.cost,
-          discount: testData.product.discount,
+          originalPrice: testData.originalPrice,
+          price: testData.price,
         },
       });
     });
@@ -133,14 +149,11 @@ describe('ProductInfo', () => {
     it('contains discounted cost', () => {
       expect(wrapper.find('[data-test="product-cost-discounted"]').exists()).toBe(true);
     });
-    it('show discounted cost if discount rate is not 0', () => {
-      expect(wrapper.vm.applyDiscount).toEqual(25500);
-    });
     it('changes origin cost format of cost with ","', () => {
       expect(wrapper.find('[data-test="product-cost-origin"]').text()).toEqual('30,000원');
     });
     it('changes discounted cost format of cost with ","', () => {
-      expect(wrapper.find('[data-test="product-cost-discounted"]').text()).toEqual('25,500원');
+      expect(wrapper.find('[data-test="product-cost-discounted"]').text()).toEqual('20,000원');
     });
   });
 
@@ -166,19 +179,13 @@ describe('ProductInfo', () => {
     beforeEach(() => {
       wrapper = mount(ProductReview, {
         propsData: {
-          userReviews: testData.reviews,
+          user_review: [{ id: '11' }],
         },
       });
     });
 
-    it('contains average review rate', () => {
-      expect(wrapper.find('#average-rate').exists()).toBe(true);
-    });
     it('contains right length of reviews', () => {
-      expect(wrapper.findAll('#product-review-content').length).toBe(2);
-    });
-    it('contains right average review rate', () => {
-      expect(wrapper.find('#average-rate').text()).toContain('4.38');
+      expect(wrapper.findAll('#product-review-content').length).toBe(1);
     });
   });
 
@@ -186,14 +193,16 @@ describe('ProductInfo', () => {
     beforeEach(() => {
       wrapper = mount(ProductReviewDetail, {
         propsData: {
-          review: testData.reviews[0],
+          content: testData.reviews.content,
+          created: testData.reviews.created,
+          image: testData.reviews.image,
+          likesCount: testData.reviews.likesCount,
+          title: testData.reviews.title,
+          writer: testData.reviews.writer,
         },
       });
     });
 
-    it('contains reviewer image', () => {
-      expect(wrapper.find('[data-test="user-image"]').exists()).toBe(true);
-    });
     it('contains reviewer nickname', () => {
       expect(wrapper.find('[data-test="user-nickname"]').exists()).toBe(true);
     });
@@ -213,8 +222,7 @@ describe('Product Buy', () => {
   beforeEach(() => {
     wrapper = mount(ProductBuy, {
       propsData: {
-        cost: testData.product.cost,
-        discount: testData.product.discount,
+        price: 20000,
       },
     });
   });
@@ -224,10 +232,7 @@ describe('Product Buy', () => {
   it('contains "장바구니" button', () => {
     expect(wrapper.find('#btn-cart').exists()).toBe(true);
   });
-  it('contains discounted cost of product', () => {
-    expect(wrapper.vm.applyDiscount).toEqual(25500);
-  });
   it('contains right format of cost that includes ","', () => {
-    expect(wrapper.find('#btn-buy p').text()).toContain('25,500');
+    expect(wrapper.find('#btn-buy p').text()).toContain('20,000');
   });
 });

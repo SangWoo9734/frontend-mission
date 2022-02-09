@@ -2,33 +2,24 @@ import { shallowMount } from '@vue/test-utils';
 import Item from '@/components/ItemList/Item.vue';
 
 describe('Item', () => {
-  const testUrl = 'www.google.com';
-  const testTitle = 'TestTitle';
-  const testShortDescription = 'Test Description';
-  const testCost = 30000;
-  const testDiscountTrue = { isDiscount: true, rate: 10 };
-  const testDiscountFalse = { isDiscount: false, rate: 0 };
-  const testDiscountedCost = 27000;
-  const testReviewLength = 3;
-  const testAverageRate = '4.6';
-  const isNewFalse = false;
-  const isNewTrue = true;
+  const testId = 'abcd';
+  const tesImagetUrl = 'www.google.com';
+  const testName = 'TestTitle';
+  const testDescription = 'Test Description';
+  const testOriginalPrice = 30000;
+  const testPrice = 27000;
 
   let wrapper;
 
   beforeEach(() => {
     wrapper = shallowMount(Item, {
       propsData: {
-        imgUrl: testUrl,
-        title: testTitle,
-        shortDescription: testShortDescription,
-        cost: testCost,
-        isDiscount: testDiscountTrue.isDiscount,
-        discountRate: testDiscountTrue.rate,
-        discountedCost: testDiscountedCost,
-        reviewLength: testReviewLength,
-        averageRate: testAverageRate,
-        isNew: isNewFalse,
+        id: testId,
+        image: tesImagetUrl,
+        name: testName,
+        description: testDescription,
+        originalPrice: testOriginalPrice,
+        price: testPrice,
       },
     });
   });
@@ -43,14 +34,16 @@ describe('Item', () => {
     });
 
     it('renders product image', async () => {
-      expect(wrapper.find('[data-test="item-image"]').attributes().src).toEqual(testUrl);
+      expect(wrapper.find('[data-test="item-image"]').attributes().src).toEqual(tesImagetUrl);
     });
 
     it('renders "No image"', async () => {
       const basicUrl = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-nOAglpmejsvQmil3kr19lwURHplsMvhv5A&usqp=CAU';
+
       await wrapper.setProps({
-        imgUrl: '',
+        image: '',
       });
+
       expect(wrapper.find('[data-test="item-image"]').attributes().src).toEqual(basicUrl);
     });
   });
@@ -61,45 +54,22 @@ describe('Item', () => {
     });
 
     it('renders product title', async () => {
-      expect(wrapper.find('[data-test="item-title"]').text()).toEqual(testTitle);
+      expect(wrapper.find('[data-test="item-title"]').text()).toEqual(testName);
     });
   });
 
-  describe('Item Rate', () => {
-    it('contains product rate', async () => {
-      expect(wrapper.find('[data-test="item-averagerate"]').exists()).toBeTruthy();
-    });
-
-    it('renders product average rate', async () => {
-      expect(wrapper.find('[data-test="item-averagerate"]').text()).toContain('4.6');
-    });
-
-    it('renders the number of reviews', async () => {
-      expect(wrapper.find('[data-test="item-averagerate"]').text()).toContain('(3)');
-    });
-
-    it('renders average rate when it has not product review', async () => {
-      await wrapper.setProps({
-        reviewLength: 0,
-        averageRate: '0.00',
-      });
-
-      expect(wrapper.find('[data-test="item-averagerate"]').text()).toContain('0.00');
-      expect(wrapper.find('[data-test="item-averagerate"]').text()).toContain('(0)');
-    });
-  });
   describe('Item Short Description', () => {
     it('contains short description about each item', () => {
       expect(wrapper.find('[data-test="item-description"]').exists()).toBeTruthy();
     });
 
     it('render right description', () => {
-      expect(wrapper.find('[data-test="item-description"]').text()).toEqual(testShortDescription);
+      expect(wrapper.find('[data-test="item-description"]').text()).toEqual(testDescription);
     });
 
     it('renders empty string if data not contain description', async () => {
       await wrapper.setProps({
-        shortDescription: '',
+        description: '',
       });
 
       expect(wrapper.find('[data-test="item-description"]').text()).toEqual('');
@@ -121,29 +91,13 @@ describe('Item', () => {
 
     it('contains Item discount info if isDiscount is False', async () => {
       await wrapper.setProps({
-        isDiscount: testDiscountFalse.isDiscount,
-        discountRate: testDiscountFalse.rate,
+        originalPrice: 10000,
+        price: 10000,
       });
 
       expect(wrapper.find('[data-test="item-discount-rate"]').exists()).toBeFalsy();
       expect(wrapper.find('[data-test="item-origin-cost"]').exists()).toBeFalsy();
       expect(wrapper.find('[data-test="item-discounted-cost"]').exists()).toBeTruthy();
-    });
-
-    it('contains "new" bedge that item uploaded within 7 days', async () => {
-      await wrapper.setProps({
-        isNew: isNewTrue,
-      });
-
-      expect(wrapper.find('[data-test="item-new"]').exists()).toBeTruthy();
-    });
-
-    it('Products that have been uploaded 7 days ago do not include badges.', async () => {
-      await wrapper.setProps({
-        isNew: isNewFalse,
-      });
-
-      expect(wrapper.find('[data-test="item-new"]').exists()).toBeFalsy();
     });
   });
 });
