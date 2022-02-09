@@ -5,26 +5,22 @@
         class='item-image item-center width-fit' data-test='item-image'>
     </div>
     <div class='item-info-container'>
-      <div class='item-title text-shorten bold' data-test='item-title'>{{ title }}</div>
-      <div class='item-averagerate' data-test='item-averagerate'>
-        ⭐️ {{ averageRate }} ({{ reviewLength }})
-      </div>
+      <div class='item-title text-shorten bold' data-test='item-title'>{{ name }}</div>
       <div class='item-description text-shorten' data-test='item-description'>
-        <p>{{ shortDescription }}</p>
+        <p>{{ description }}</p>
       </div>
-      <div v-if='isDiscount' class='item-discount flex'>
+      <div v-if='originalPrice != price' class='item-discount flex'>
         <p class='item-discount-rate bold' data-test='item-discount-rate'>
-          {{ discountRate }}%
+          {{ calculateDiscountRate }}%
         </p>
         <p class='item-original-cost' data-test='item-origin-cost'>
-          {{ commaWithOriginalCost }}원
+          {{ commaWithOriginalPrice }}원
         </p>
       </div>
       <div class='item-discounted-cost bold' data-test='item-discounted-cost'>
-        {{ commaWithDiscountedCost }}원
+        {{ commaWithPrice }}원
       </div>
     </div>
-    <div v-if='isNew' class='item-new' data-test='item-new'>NEW</div>
   </div>
 </template>
 
@@ -33,30 +29,29 @@ export default {
   name: 'ItemListItem',
   data() {
     return {
-      defaultImgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-nOAglpmejsvQmil3kr19lwURHplsMvhv5A&usqp=CAU',
+      defaultImage: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-nOAglpmejsvQmil3kr19lwURHplsMvhv5A&usqp=CAU',
     };
   },
   props: {
-    imgUrl: { type: String, default: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-nOAglpmejsvQmil3kr19lwURHplsMvhv5A&usqp=CAU' },
-    title: { type: String, default: '' },
-    shortDescription: { type: String, default: '' },
-    cost: { type: Number, default: 0 },
-    isDiscount: { type: Boolean, default: false },
-    discountRate: { type: Number, default: 0 },
-    discountedCost: { type: Number, default: 0 },
-    reviewLength: { type: Number, default: 0 },
-    averageRate: { type: String, default: '0.00' },
-    isNew: { type: Boolean, default: false },
+    id: { type: String, default: '' },
+    image: { type: String, default: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-nOAglpmejsvQmil3kr19lwURHplsMvhv5A&usqp=CAU' },
+    name: { type: String, default: '' },
+    description: { type: String, default: '' },
+    originalPrice: { type: Number, default: 0 },
+    price: { type: Number, default: 0 },
   },
   computed: {
-    commaWithOriginalCost() {
-      return this.cost.toLocaleString('ko-KR');
+    commaWithOriginalPrice() {
+      return this.originalPrice.toLocaleString('ko-KR');
     },
-    commaWithDiscountedCost() {
-      return this.discountedCost.toLocaleString('ko-KR');
+    commaWithPrice() {
+      return this.price.toLocaleString('ko-KR');
+    },
+    calculateDiscountRate() {
+      return ((1 - (this.price / this.originalPrice)) * 100).toFixed(0).toLocaleString('ko-KR');
     },
     getImage() {
-      return this.imgUrl ? this.imgUrl : this.defaultImgUrl;
+      return this.image ? this.image : this.defaultImage;
     },
   },
 };
@@ -91,10 +86,6 @@ export default {
 .item-title {
   font-size: 18px;
 }
-.item-averagerate{
-  font-size: 15px;
-  padding: 2px 0;
-}
 .item-discount {
   height: 20px;
   justify-content: space-between;
@@ -120,13 +111,5 @@ export default {
   font-size: 20px;
   padding-bottom: 10px;
   padding-right: 10px;
-}
-.item-new {
-  position: absolute;
-  top : 10px;
-  left : 10px;
-  font-size: 15px;
-  font-weight: 900;
-  color: red;
 }
 </style>

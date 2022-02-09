@@ -1,12 +1,12 @@
 <template>
     <div id='user-info-container' class='flex'>
       <div class='user-image'>
-        <img :src='sellerInfo.profile_image' alt='' class='item-center' data-test='user-image'>
+        <img :src='getImage' alt='' class='item-center' data-test='user-image'>
       </div>
       <div id='user-info'>
-        <p id='user-name' data-test='user-name'>{{ sellerInfo.name }}</p>
+        <p id='user-name' data-test='user-name'>{{ name }}</p>
         <p id='user-tag' data-test='user-tag'>
-          <span v-for='(tag, index) in sellerInfo.hash_tags' :key='index' data-test='tag'>
+          <span v-for='(tag, index) in hash_tags' :key='index' data-test='tag'>
             #{{ tag }}
           </span>
         </p>
@@ -15,27 +15,21 @@
 </template>
 
 <script>
-import Repository from '../repositories/RepositoryFactory';
-
-const ItemRepository = Repository.get('items');
-
 export default {
   name: 'ProductSeller',
   data() {
     return {
-      sellerInfo: {},
+      defaultImage: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-nOAglpmejsvQmil3kr19lwURHplsMvhv5A&usqp=CAU',
     };
   },
-  created() {
-    this.getSellerInfo(this.$route.params.id)
-      .then((result) => {
-        this.sellerInfo = result;
-      });
+  props: {
+    hash_tags: { type: Array, default: null },
+    name: { type: String, default: '' },
+    profile_image: { type: String, default: '' },
   },
-  methods: {
-    async getSellerInfo(id) {
-      const result = await ItemRepository.getItemInfo(id);
-      return result.data.item.seller;
+  computed: {
+    getImage() {
+      return this.profile_image ? this.profile_image : this.defaultImage;
     },
   },
 };

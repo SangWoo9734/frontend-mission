@@ -3,7 +3,7 @@
     <div id='product-review-nav' class='flex'>
       <h3 class='detail-nav'>Reviews</h3>
     </div>
-    <ProducReviewDetail v-for='review in userReview' :key='review.review_no'
+    <ProducReviewDetail v-for='review in user_review' :key='review.review_no'
       :content= 'review.content'
       :created= 'review.created'
       :image= 'review.img'
@@ -16,31 +16,14 @@
 
 <script>
 import ProducReviewDetail from './ProductReviewDetail.vue';
-import Repository from '../repositories/RepositoryFactory';
-
-const ItemRepository = Repository.get('items');
 
 export default {
   name: 'ProductReview.vue',
-  data() {
-    return {
-      userReview: [],
-    };
-  },
   components: {
     ProducReviewDetail,
   },
-  created() {
-    this.getReviewInfo(this.$route.params.id)
-      .then((result) => {
-        this.userReview = result;
-      });
-  },
-  methods: {
-    async getReviewInfo(id) {
-      const result = await ItemRepository.getItemInfo(id);
-      return result.data.item.reviews;
-    },
+  props: {
+    user_review: { type: Array, default: null },
   },
 };
 </script>
