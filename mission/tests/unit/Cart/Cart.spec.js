@@ -1,20 +1,60 @@
-import { mount } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
+
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { fas } from '@fortawesome/free-solid-svg-icons';
+import { far } from '@fortawesome/free-regular-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+
 import Cart from '@/views/Cart.vue';
+import CartAPI from '@/repositories/CartRepository';
+
+library.add(fas, far);
 
 let wrapper;
 
+const cartData = [
+  {
+    product_no: 'asdf1234',
+    name: '핏이 좋은 수트',
+    image: 'https://projectlion-vue.s3.ap-northeast-2.amazonaws.com/items/suit-1.png',
+    price: 198000,
+    original_price: 298000,
+    description: '아주 잘 맞는 수트',
+  },
+];
+
+const response = {
+  data: { cart_item: cartData },
+};
+
+CartAPI.getCart = jest.fn().mockResolvedValue(response);
+
 describe('Cart.vue', () => {
-  beforeEach(() => {
-    wrapper = mount(Cart);
+  beforeEach(async () => {
+    wrapper = mount(Cart, {
+      global: {
+        stubs: { FontAwesomeIcon },
+      },
+    });
+
+    await wrapper.setData({
+      loading: false,
+    });
   });
 
   it('renders cart page', () => {
     expect(wrapper.find('#cart').exists()).toBeTruthy();
   });
 
+  it('called Cart API', async () => {
+    await flushPromises();
+
+    expect(CartAPI.getCart).toHaveBeenCalled();
+  });
+
   it('renders page title', () => {
     expect(wrapper.find('[data-test="cart-title"]').exists()).toBeTruthy();
-    expect(wrapper.find('[data-test="cart-title"]').text()).toEqual('🛒 장바구니');
+    expect(wrapper.find('[data-test="cart-title"]').text()).toEqual('🛒 Cart');
   });
 
   it('renders number of items which in cart now', () => {
@@ -69,5 +109,21 @@ describe('Cart.vue', () => {
     });
 
     expect(wrapper.find('[data-test="cart-totalcost"]').text()).toContain('0');
+  });
+
+  it('render loading when loading state is false', async () => {
+    await wrapper.setData({
+      loading: false,
+    });
+
+    expect(wrapper.find('[data-test="loading"]').exists()).toBeFalsy();
+  });
+
+  it('render loading when loading state is true', async () => {
+    await wrapper.setData({
+      loading: true,
+    });
+
+    expect(wrapper.find('[data-test="loading"]').exists()).toBeTruthy();
   });
 });

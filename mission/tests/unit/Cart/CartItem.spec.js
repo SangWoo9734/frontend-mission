@@ -1,5 +1,13 @@
 import { mount } from '@vue/test-utils';
+
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { fas } from '@fortawesome/free-solid-svg-icons';
+import { far } from '@fortawesome/free-regular-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+
 import CartItem from '@/components/Cart/CartItem.vue';
+
+library.add(fas, far);
 
 let wrapper;
 
@@ -12,7 +20,11 @@ const testQuantity = 2;
 
 describe('CartItem', () => {
   beforeEach(() => {
-    wrapper = mount(CartItem);
+    wrapper = mount(CartItem, {
+      global: {
+        stubs: { FontAwesomeIcon },
+      },
+    });
   });
 
   it('renders CartItem components', () => {
@@ -34,7 +46,7 @@ describe('CartItem', () => {
   it('renders right image of item', async () => {
     const testDefaultImage = 'default';
     await wrapper.setProps({
-      image: testImage,
+      image: '',
     });
     await wrapper.setData({
       defaultImage: testDefaultImage,
