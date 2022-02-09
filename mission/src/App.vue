@@ -4,19 +4,15 @@
     <TheHeader />
     <!-- View -->
     <router-view />
-    <!-- Navbar -->
-    <TheNavbar />
   </div>
 </template>
 <script>
 import TheHeader from './components/ItemCommon/TheHeader.vue';
-import TheNavbar from './components/ItemCommon/TheNavbar.vue';
 
 export default {
   name: 'App',
   components: {
     TheHeader,
-    TheNavbar,
   },
 };
 </script>
