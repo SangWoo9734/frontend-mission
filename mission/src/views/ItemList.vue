@@ -1,38 +1,48 @@
 <template>
-  <div id='item-list-page' class='container'>
+  <div v-if='!loading' id='item-list-page' class='container'>
     <!-- SortButton -->
     <ItemSort @sortItem='sortItem' />
     <!-- ItemList -->
     <div class='item-list' data-test='item-list'>
-      <Item v-for='item in itemData' :key='item.product_no'
-        :id= 'item.product_no'
-        :image= 'item.image'
-        :name= 'item.name'
-        :description= 'item.description'
-        :originalPrice= 'item.original_price'
-        :price= 'item.price'
-        @click= 'goItemInfo(item.product_no)'
-        data-test='item' />
+      <router-link v-for='item in itemData' :key='item.product_no' :to='`/item/${item.product_no}`'>
+        <Item
+          :id= 'item.product_no'
+          :image= 'item.image'
+          :name= 'item.name'
+          :description= 'item.description'
+          :originalPrice= 'item.original_price'
+          :price= 'item.price'
+          data-test='item' />
+      </router-link>
     </div>
   </div>
+
+  <Circle v-else class='loading item-center' data-test='loading' />
+  <TheNavbar :state='"item"' />
 </template>
 
 <script>
+import Circle from '../components/ItemCommon/Circle.vue';
 import ItemSort from '../components/ItemList/ItemSort.vue';
-import Item from '../components/Item.vue';
+import Item from '../components/ItemList/Item.vue';
+import TheNavbar from '../components/ItemCommon/TheNavbar.vue';
 
 import Repository from '../repositories/RepositoryFactory';
 
-const ItemRepository = Repository.get('items');
+const ItemRepository = Repository.get('item');
 
 export default {
   name: 'ItemListPage',
   components: {
+    Circle,
     ItemSort,
     Item,
+    TheNavbar,
+
   },
   data() {
     return {
+      loading: true,
       itemData: [],
     };
   },
@@ -69,19 +79,18 @@ export default {
       if (point === '높은 가격순') this.sortDesending('discountedCost');
       if (point === '리뷰 많은순') this.sortDesending('reviewLength');
     },
-    goItemInfo(itemId) {
-      this.$router.push({ name: 'ItemInfo', params: { id: itemId } });
-    },
     async getItemData() {
       const result = await ItemRepository.getItems();
-      return result.data.items;
+      if (result.status === 200) {
+        this.itemData = result.data.items;
+        this.loading = false;
+      } else {
+        console.log(result);
+      }
     },
   },
   created() {
-    this.getItemData()
-      .then((result) => {
-        this.itemData = result;
-      });
+    this.getItemData();
   },
 };
 </script>
