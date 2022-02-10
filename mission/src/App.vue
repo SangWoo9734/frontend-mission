@@ -1,7 +1,21 @@
 <template>
-  <router-view />
+  <div class='container'>
+    <!-- Header -->
+    <TheHeader />
+    <!-- View -->
+    <router-view />
+  </div>
 </template>
+<script>
+import TheHeader from './components/ItemCommon/TheHeader.vue';
 
+export default {
+  name: 'App',
+  components: {
+    TheHeader,
+  },
+};
+</script>
 <style>
 @import url('./assets/style/common.css');
 #app {

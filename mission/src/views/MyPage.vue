@@ -1,0 +1,117 @@
+<template>
+  <div v-if='!loading' id='mypage'>
+    <div class='sub-navbar flex'>
+      <h2 class='sub-navbar-title' data-test='user-title'>👦🏻 My Page</h2>
+    </div>
+    <div class='mypage-user-conatiner flex'>
+      <div class='mypage-img-container'>
+        <img :src='defaultImage' alt='user-image' class='mypage-user-img' data-test='user-image'>
+      </div>
+      <div class='mypage-user-info'>
+        <h2 class='mypage-info-detail' data-test='user-name'>{{ user.username }} 님</h2>
+        <p class='mypage-info-detail' data-test='user-nick'>
+          <font-awesome-icon icon='user-alt' /> ID: {{ user.id }}
+        </p>
+        <p class='mypage-useremail' data-test='user-email'>
+          <font-awesome-icon icon='envelope' /> E-mail: {{ user.email }}
+        </p>
+      </div>
+    </div>
+    <div class='mypage-tool-container' data-test='tools'>
+      <p class='mypage-tool'><font-awesome-icon icon='credit-card' /> 결제수단 관리</p>
+      <p class='mypage-tool'><font-awesome-icon icon='sign-out-alt' /> 로그아웃</p>
+      <p class='mypage-tool'><font-awesome-icon icon='cog' /> 설정</p>
+    </div>
+  </div>
+
+  <Circle v-else class='loading item-center' data-test='loading'/>
+  <TheNavbar :state='"mypage"' />
+</template>
+
+<script>
+import Circle from '../components/ItemCommon/Circle.vue';
+import Repository from '../repositories/RepositoryFactory';
+import TheNavbar from '../components/ItemCommon/TheNavbar.vue';
+
+const UserRepository = Repository.get('user');
+
+export default {
+  name: 'MyPage',
+  components: {
+    Circle,
+    TheNavbar,
+  },
+  data() {
+    return {
+      loading: true,
+      user: {},
+      defaultImage: 'https://us.123rf.com/450wm/tuktukdesign/tuktukdesign1608/tuktukdesign160800043/61010830-user-icon-man-profile-businessman-avatar-person-glyph-vector-illustration.jpg?ver=6',
+    };
+  },
+  methods: {
+    async getUserInfo() {
+      const result = await UserRepository.getInfo();
+      if (result.status === 200) {
+        this.user = result.data;
+        this.loading = false;
+      } else {
+        console.log(result);
+      }
+    },
+  },
+  created() {
+    this.getUserInfo();
+  },
+};
+</script>
+
+<style scoped>
+#mypage {
+  padding-top: 60px;
+  margin-bottom: 70px;
+  height: calc(100vh - 130px);
+}
+.mypage-user-conatiner {
+  justify-content: center;
+  align-items: center;
+  margin: 0 20px 20px 20px;
+  overflow: hidden;
+  border-bottom: 1px solid lightgray;
+}
+.sub-navbar {
+  margin-bottom: 10px;
+}
+.mypage-img-container {
+  width: 30%;
+  border-radius: 30px;
+}
+.mypage-user-img {
+  width: 100%;
+}
+.mypage-user-info {
+  margin: 10px;
+  padding-left: 10px;
+  width: 70%;
+  text-align: left;
+}
+.mypage-info-detail  {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+.mypage-tool-container {
+  text-align: left;
+  padding: 0 20px;
+}
+.mypage-tool {
+  padding: 0 10px;
+  height: 40px;
+  font-size: 16px;
+  font-weight: bold;
+}
+.mypage-tool svg {
+  margin-right: 10px;
+}
+.mypage-tool:hover {
+  cursor: pointer;
+}
+</style>

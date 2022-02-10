@@ -1,18 +1,22 @@
 <template>
     <div id='product-container'>
       <!-- 상품 이미지 -->
-      <ProductImage :productImg='productData.product.imgUrl' />
+      <ProductImage :image='image' />
       <!-- 판매자 정보 -->
-      <ProductSeller :seller='productData.seller' />
+      <ProductSeller
+        :hash_tags= 'hash_tags'
+        :name= 'name'
+        :profile_image= 'profile_image'
+      />
       <div id='product-data-detail' class='flex'>
-        <p data-test='product-title'>{{ productData.product.title }}</p>
+        <p data-test='product-title'>{{ item_name }}</p>
       </div>
-      <ProductCost :cost='productData.product.cost' :discount='productData.product.discount' />
+      <ProductCost :originalPrice='originalPrice' :price='price' />
       <!-- 제품 설명 -->
-      <ProductDescription :description='productData.product.descriptionHTML' />
+      <ProductDescription :description='description' />
 
       <!-- 사용자 리뷰 -->
-      <ProductReview :userReviews='productData.reviews' />
+      <ProductReview :user_review='review' />
     </div>
 </template>
 
@@ -26,7 +30,15 @@ import ProductReview from './ProductReview.vue';
 export default {
   name: 'ProductInfo',
   props: {
-    productData: Object,
+    description: { type: String, default: '' },
+    image: { type: String, default: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-nOAglpmejsvQmil3kr19lwURHplsMvhv5A&usqp=CAU' },
+    item_name: { type: String, default: '' },
+    originalPrice: { type: Number, default: 0 },
+    price: { type: Number, default: 0 },
+    review: { type: Array, default: null },
+    hash_tags: { type: Array, default: null },
+    name: { type: String, default: '' },
+    profile_image: { type: String, default: '' },
   },
   components: {
     ProductImage,
@@ -34,6 +46,11 @@ export default {
     ProductCost,
     ProductDescription,
     ProductReview,
+  },
+  computed: {
+    getImage() {
+      return this.image ? this.image : this.defaultImgUrl;
+    },
   },
 };
 </script>

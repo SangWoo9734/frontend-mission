@@ -1,11 +1,15 @@
-import { mount } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
+import { createRouter, createWebHashHistory } from 'vue-router';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
-import ItemInfoPage from '@/views/ItemList.vue';
+import App from '@/App.vue';
+import ItemList from '@/views/ItemList.vue';
+import ItemInfo from '@/views/ItemInfo.vue';
+import ItemAPI from '@/repositories/ItemRepository';
 
 library.add(fas, far);
 
@@ -13,50 +17,109 @@ let wrapper;
 
 const testData = [
   {
-    id: 1102321,
-    imgUrl: '',
-    title: 'A',
-    cost: 30000,
-    discount: { isDiscount: true, rate: 15 },
-    userRate: [4.8, 4.3, 4.1, 4.5, 4.7],
-    uploadDate: '2022-01-02',
+    product_no: '112',
+    image: '',
+    name: 'A',
+    price: 20000,
+    originalPrice: 30000,
+    description: 'abcdef',
   },
   {
-    id: 1102320,
-    imgUrl: '',
-    title: 'B',
-    cost: 12000,
-    discount: { isDiscount: true, rate: 10 },
-    userRate: [4.4, 4.2, 3.7],
-    uploadDate: '2022-01-01',
+    product_no: '123',
+    image: '',
+    name: 'A',
+    price: 20000,
+    originalPrice: 30000,
+    description: 'abcdef',
   },
   {
-    id: 1102325,
-    imgUrl: '',
-    title: 'C',
-    cost: 89000,
-    discount: { isDiscount: false, rate: 0 },
-    userRate: [4.6, 4.5],
-    uploadDate: '2022-01-15',
+    product_no: '234',
+    image: '',
+    name: 'A',
+    price: 20000,
+    originalPrice: 30000,
+    description: 'abcdef',
   },
 ];
 
+const router = createRouter({
+  history: createWebHashHistory(),
+  routes: [
+    {
+      path: '/item',
+      component: ItemList,
+    },
+    {
+      path: '/item/:id',
+      component: ItemInfo,
+    },
+  ],
+});
+
+const response = {
+  data: {
+    items: testData,
+  },
+};
+
+ItemAPI.getItems = jest.fn().mockResolvedValue(response);
+
 describe('ItemList', () => {
-  beforeEach(() => {
-    wrapper = mount(ItemInfoPage, {
+  beforeEach(async () => {
+    wrapper = mount(ItemList, {
       global: {
         stubs: { FontAwesomeIcon },
       },
     });
+
+    await wrapper.setData({
+      itemData: testData,
+      loading: false,
+    });
   });
 
-  it('renders ItemListPage', () => {
+  it('renders ItemListPage', async () => {
+    await wrapper.setData({
+      loading: false,
+    });
     expect(wrapper.find('#item-list-page').exists()).toBeTruthy();
+  });
+
+  it('itemAPI was called', async () => {
+    await flushPromises();
+
+    expect(ItemAPI.getItems).toHaveBeenCalled();
+  });
+
+  it('routing to ItemInfo', async () => {
+    const wrapperApp = mount(App, {
+      global: {
+        plugins: [router],
+        stubs: { FontAwesomeIcon },
+      },
+    });
+
+    router.push('/item');
+
+    await router.isReady();
+    await wrapperApp.find('[data-test="item"]').trigger('click');
+    await flushPromises();
+
+    expect(wrapperApp.findComponent(ItemInfo).exists()).toBeTruthy();
+  });
+
+  it('does not renders ItemListPage when loading data', async () => {
+    await wrapper.setData({
+      loading: true,
+    });
+
+    expect(wrapper.find('#item-list-page').exists()).toBeFalsy();
   });
 
   it('render each items', async () => {
     await wrapper.setData({
       itemData: testData,
+      loading: false,
     });
 
     const allItems = wrapper.findAllComponents('[data-test="item"]');
@@ -81,5 +144,21 @@ describe('ItemList', () => {
       expect(item.find('[data-test="item-averagerate"]').exists()).toBeTruthy();
       expect(item.find('[data-test="item-discounted-cost"]').exists()).toBeTruthy();
     });
+  });
+
+  it('render loading if loading state is true', async () => {
+    await wrapper.setData({
+      loading: true,
+    });
+
+    expect(wrapper.find('[data-test="loading"]').exists()).toBeTruthy();
+  });
+
+  it('does not renders loading if loading state is true', async () => {
+    await wrapper.setData({
+      loading: false,
+    });
+
+    expect(wrapper.find('[data-test="loading"]').exists()).toBeFalsy();
   });
 });

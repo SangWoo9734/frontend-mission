@@ -1,51 +1,55 @@
 <template>
-  <div id='navigation' class='position-fixed flex' data-test='nav-button'>
-      <div v-for='m in menu' :key='m.name'
-        :class='isSelected(m.select)' @click='selectMenu(m.name)'>
+  <div id='navigation' class='position-fixed flex'>
+      <router-link v-for='m in menu' :key='m.name'
+        :class='isSelected(m.route)' :to='`/${m.route}`'
+        :data-test='`nav-button-${m.route}`' >
         <font-awesome-icon :icon='m.icon' />
-        <p class='navigation-btn-title'>{{ m.name }}</p>
-      </div>
+        <p class='navigation-btn-title' data-test='nav-button-title'>{{ m.name }}</p>
+      </router-link>
     </div>
 </template>
 
 <script>
 export default {
   name: 'TheNavbar',
+  props: {
+    state: { type: String, default: '' },
+  },
   data() {
     return {
-      nowSelected: 'Home',
+      nowSelected: 'item',
       menu: {
-        Home: {
+        item: {
           name: 'Home',
+          route: 'item',
           icon: 'home',
-          select: true,
         },
-        Like: {
+        wish: {
           name: 'Like',
+          route: 'wish',
           icon: 'heart',
-          select: false,
         },
-        Cart: {
+        cart: {
           name: 'Cart',
+          route: 'cart',
           icon: 'shopping-cart',
-          select: false,
         },
-        MyPage: {
+        mypage: {
           name: 'MyPage',
+          route: 'mypage',
           icon: 'user',
-          select: false,
         },
       },
     };
   },
   methods: {
-    selectMenu(name) {
+    selectMenu(menuName) {
       this.menu[this.nowSelected].select = false;
-      this.menu[name].select = true;
-      this.nowSelected = name;
+      this.menu[menuName].select = true;
+      this.nowSelected = menuName;
     },
-    isSelected(select) {
-      return select ? 'navigation-btn flex selectedMenu' : 'navigation-btn flex';
+    isSelected(route) {
+      return this.state === route ? 'navigation-btn flex selectedMenu' : 'navigation-btn flex';
     },
   },
 };

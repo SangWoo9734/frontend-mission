@@ -2,14 +2,10 @@
   <div id='product-review-content' class='flex'>
     <div id='product-review-info'>
       <div id='product-review-reviewer' class='flex'>
-        <div class='user-image' data-test='user-image'>
-          <img :src='review.userImg' alt="" class='item-center'>
-        </div>
-        <p data-test='user-nickname'>{{ review.userNickname }}</p>
+        <p data-test='user-nickname'>{{ writer }}</p>
       </div>
       <div id='product-review-comment'>
-        <div id='product-review-rate'>⭐️ {{ review.rate }}</div>
-        <div id='product-review-text'>{{ review.text }}</div>
+        <div id='product-review-text'>{{ content }}</div>
       </div>
       <div id='product-review-react' class='flex'>
           <button id='react-good' class='btn' @click='reaction("good")'>👍 {{ react.good }}</button>
@@ -17,7 +13,7 @@
         </div>
     </div>
     <div id='product-review-image'>
-      <img :src="review.reviewImg" alt="">
+      <img :src='image' alt=''>
     </div>
   </div>
 </template>
@@ -25,19 +21,28 @@
 <script>
 export default {
   name: 'ProducReviewDetail',
-  props: {
-    review: Object,
-  },
   data() {
     return {
+      defaultImage: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-nOAglpmejsvQmil3kr19lwURHplsMvhv5A&usqp=CAU',
       react: { good: 0, bad: 0 },
       reactOnOff: { good: true, bad: true },
     };
+  },
+  props: {
+    content: { type: String, default: '' },
+    created: { type: String, default: '' },
+    image: { type: String, default: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-nOAglpmejsvQmil3kr19lwURHplsMvhv5A&usqp=CAU' },
+    likesCount: { type: Number, default: 0 },
+    title: { type: String, default: '' },
+    writer: { type: String, default: '' },
   },
   methods: {
     reaction(val) {
       this.react[val] = this.reactOnOff[val] ? this.react[val] + 1 : this.react[val] - 1;
       this.reactOnOff[val] = !this.reactOnOff[val];
+    },
+    getImage() {
+      return this.image ? this.image : this.defaultImgUrl;
     },
   },
 };
@@ -64,7 +69,7 @@ export default {
 #product-review-reviewer {
   align-items: center;
   height: 20%;
-  padding-bottom: 10px;
+  padding: 5px 0 0 10px;
 }
 #product-review-reviewer p{
   font-weight: bold;
