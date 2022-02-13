@@ -51,12 +51,12 @@ export default {
   },
   methods: {
     async getWishInfo() {
-      const result = await WishRepository.getWish();
-      if (result.status === 200) {
+      try {
+        const result = await WishRepository.getWish();
         this.wish = result.data.items;
         this.loading = false;
-      } else {
-        console.log(result);
+      } catch (error) {
+        console.log(error);
       }
     },
     goItemInfo(itemId) {

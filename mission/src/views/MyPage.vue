@@ -50,12 +50,12 @@ export default {
   },
   methods: {
     async getUserInfo() {
-      const result = await UserRepository.getInfo();
-      if (result.status === 200) {
+      try {
+        const result = await UserRepository.getInfo();
         this.user = result.data;
         this.loading = false;
-      } else {
-        console.log(result);
+      } catch (error) {
+        console.log(error);
       }
     },
   },
