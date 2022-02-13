@@ -1,4 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils';
+import { createStore } from 'vuex';
+
 import ProductInfo from '@/components/ProductInfo.vue';
 import ProductImage from '@/components/ProductImage.vue';
 import ProductSeller from '@/components/ProductSeller.vue';
@@ -6,7 +8,7 @@ import ProductCost from '@/components/ProductCost.vue';
 import ProductDescription from '@/components/ProductDescription.vue';
 import ProductReview from '@/components/ProductReview.vue';
 import ProductReviewDetail from '@/components/ProductReviewDetail.vue';
-import ProductBuy from '@/components/ProductBuy.vue';
+import ItemModal from '@/components/ItemInfo/ItemModal.vue';
 import ItemInfo from '@/views/ItemInfo.vue';
 
 import ItemAPI from '@/repositories/ItemRepository';
@@ -50,8 +52,10 @@ describe('ItemInfoPage', () => {
   beforeEach(() => {
     wrapper = mount(ItemInfo);
   });
+
   it('renders ItemInfoPage', async () => {
     await wrapper.setData({
+      itemInfo: testData,
       loading: false,
     });
     expect(wrapper.find('#item-info-page').exists()).toBeTruthy();
@@ -65,6 +69,7 @@ describe('ItemInfoPage', () => {
 
   it('render loading when loading state is false', async () => {
     await wrapper.setData({
+      itemInfo: testData,
       loading: false,
     });
 
@@ -219,20 +224,106 @@ describe('ProductInfo', () => {
 });
 
 describe('Product Buy', () => {
-  beforeEach(() => {
-    wrapper = mount(ProductBuy, {
-      propsData: {
-        price: 20000,
+  const mutations = {
+    addItemInCart: jest.fn(),
+  };
+
+  const store = createStore({
+    state() {
+      return {
+        cartItem: [],
+      };
+    },
+    mutations,
+    getters: {
+      getCartItems(state) {
+        return state.cartItem;
       },
+    },
+  });
+
+  beforeEach(async () => {
+    wrapper = mount(ItemInfo, {
+      global: {
+        plugins: [store],
+      },
+    });
+
+    await wrapper.setData({
+      itemInfo: testData,
+      loading: false,
     });
   });
   it('contains "구매" button', () => {
     expect(wrapper.find('#btn-buy').exists()).toBe(true);
   });
+
+  it('add item in cartItem when user press "구매" button', async () => {
+    wrapper = mount(ItemInfo, {
+      global: {
+        plugins: [store],
+      },
+    });
+
+    await wrapper.setData({
+      itemInfo: testData,
+      loading: false,
+    });
+    await wrapper.find('#btn-buy').trigger('click');
+
+    expect(mutations.addItemInCart).toHaveBeenCalled();
+  });
+
+  it('move cart when click "장바구니 이동"', async () => {
+    expect(wrapper.find('[data-test="move-order"]').html()).toContain('to="/order"');
+  });
+
   it('contains "장바구니" button', () => {
     expect(wrapper.find('#btn-cart').exists()).toBe(true);
   });
+
   it('contains right format of cost that includes ","', () => {
     expect(wrapper.find('#btn-buy p').text()).toContain('20,000');
+  });
+
+  it('add item in cartItem when user press "장바구니 담기" button', async () => {
+    wrapper = mount(ItemInfo, {
+      global: {
+        plugins: [store],
+      },
+    });
+
+    await wrapper.setData({
+      itemInfo: testData,
+      loading: false,
+    });
+    await wrapper.find('#btn-cart').trigger('click');
+
+    expect(mutations.addItemInCart).toHaveBeenCalled();
+  });
+});
+
+describe('Item Modal', () => {
+  beforeEach(async () => {
+    wrapper = mount(ItemInfo);
+
+    await wrapper.setData({
+      itemInfo: testData,
+      loading: false,
+    });
+  });
+
+  it('renders modal when modal state is true', async () => {
+    await wrapper.setData({
+      modalState: false,
+    });
+    expect(wrapper.findComponent(ItemModal).exists()).toBeFalsy();
+  });
+
+  it('renders modal when modal state is true', async () => {
+    await wrapper.setData({
+      modalState: true,
+    });
+    expect(wrapper.findComponent(ItemModal).exists()).toBeTruthy();
   });
 });
