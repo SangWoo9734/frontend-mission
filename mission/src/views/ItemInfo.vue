@@ -11,16 +11,26 @@
       v-bind='itemInfo.seller'
     />
     <!-- 제품 구매 -->
-    <ProductBuy :price='itemInfo.price' />
+    <div id='product-buy' class='position-fixed flex'>
+      <button id='btn-cart' class='btn' @click='addItemInCart'>장바구니 담기</button>
+      <router-link id='btn-buy' class='flex btn' to='/order'
+        @click='buyDirect' data-test='move-order'>
+          <p>{{ commaWithPrice }}원 구매</p>
+      </router-link>
+    </div>
+
+    <ItemModal v-if='modalState' class='coupon-modal' :isAlreadyInCart='isAlreadyInCart'
+      @modalToggle='modalToggle' />
   </div>
 
   <Circle v-else class='loading item-center' data-test='loading' />
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import Circle from '../components/ItemCommon/Circle.vue';
+import ItemModal from '../components/ItemInfo/ItemModal.vue';
 import ProductInfo from '../components/ProductInfo.vue';
-import ProductBuy from '../components/ProductBuy.vue';
 
 import Repository from '../repositories/RepositoryFactory';
 
@@ -30,6 +40,8 @@ export default {
   name: 'ItemInfoPage',
   data() {
     return {
+      isAlreadyInCart: false,
+      modalState: false,
       loading: true,
       itemInfo: {},
     };
@@ -40,24 +52,68 @@ export default {
   components: {
     Circle,
     ProductInfo,
-    ProductBuy,
+    ItemModal,
   },
   created() {
     this.getItemInfo(this.id);
   },
   methods: {
     async getItemInfo(id) {
-      const result = await ItemRepository.getItemInfo(id);
-      if (result.status === 200) {
+      try {
+        const result = await ItemRepository.getItemInfo(id);
         this.itemInfo = result.data.item;
         this.loading = false;
-      } else {
-        console.log(result);
+      } catch (error) {
+        console.log(error);
       }
+    },
+    modalToggle() {
+      this.modalState = !this.modalState;
+    },
+    addItemInCart() {
+      this.isAlreadyInCart = this.getCartItems.filter(
+        (cartItem) => cartItem.product_no === this.id,
+      ).length === 0;
+      this.modalToggle();
+      this.$store.commit('addItemInCart', this.itemInfo);
+    },
+    buyDirect() {
+      this.$store.commit('addItemInCart', this.itemInfo);
+    },
+  },
+  computed: {
+    ...mapGetters([
+      'getCartItems',
+    ]),
+    commaWithPrice() {
+      return this.itemInfo.price.toLocaleString('ko-KR');
     },
   },
 };
 </script>
 
 <style scoped>
+#product-buy {
+  bottom: 0;
+  max-width:500px;
+  width: 100%;
+  height: 60px;
+  border-top: 0.5px solid lightgray;
+  box-shadow: 0px -2px 3px 0px lightgray;
+  background: white;
+}
+.btn {
+  width: 45%;
+  margin: 0 10px;
+  height: 70%;
+  font-weight: bold;
+  font-size: 18px;
+}
+#btn-buy {
+  text-decoration: none;
+  background : rgb(255, 192, 109);
+  justify-content: center;
+  align-items: center;
+  color: black;
+}
 </style>
