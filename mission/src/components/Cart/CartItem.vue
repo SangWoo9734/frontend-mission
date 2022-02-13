@@ -36,7 +36,9 @@
         </div>
       </div>
     </div>
-    <button id='delete' class='cart-delete' data-test='delete-button'>삭제</button>
+    <button id='delete' class='cart-delete' @click='removeItemFromCart' data-test='delete-button'>
+      삭제
+    </button>
   </div>
 </template>
 
@@ -72,15 +74,13 @@ export default {
   },
   methods: {
     addQuantity() {
-      this.$emit('addQuantity', this.id);
+      this.$store.commit('addQuantity', this.id);
     },
     subQuantity() {
-      if (this.quantity === 1) {
-        // eslint-disable-next-line no-alert
-        alert('더이상 수량을 줄일 수 없습니다.');
-      } else {
-        this.$emit('subQuantity', this.id);
-      }
+      this.$store.commit('subQuantity', this.id);
+    },
+    removeItemFromCart() {
+      this.$store.commit('removeItemFromCart', this.id);
     },
   },
 };
@@ -133,7 +133,7 @@ export default {
   align-items: center;
   margin-bottom: 5px;
 }
- .cart-item-info-price {
+.cart-item-info-price {
   justify-content: space-between;
   align-items: flex-end;
 }

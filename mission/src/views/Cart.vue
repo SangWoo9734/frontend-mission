@@ -5,7 +5,8 @@
       <h2 class='sub-navbar-title' data-test='cart-title'>🛒 Cart</h2>
     </div>
     <!-- 장바구니 목록 -->
-    <div class='cart-item-container' v-for='item in cart' :key='item.id'>
+    <div v-if='cart.length === 0' class='cart-empty bold'>장바구니가 비어있습니다.</div>
+    <div v-else class='cart-item-container' v-for='item in cart' :key='item.product_no'>
       <CartItem
         :id = 'item.product_no'
         :image= 'item.image'
@@ -13,8 +14,6 @@
         :originalPrice= 'item.original_price'
         :price= 'item.price'
         :quantity= 'item.quantity'
-        @addQuantity= 'addQuantity'
-        @subQuantity= 'subQuantity'
       />
     </div>
     <!-- 수량확인 및 주문 버튼 -->
@@ -25,7 +24,9 @@
           <span>{{ calculateTotalCost }}</span> 원
         </p>
       </div>
-      <button class='cart-order-btn bold'>주문하기</button>
+      <router-link to='/order' class='cart-order-btn bold flex' data-test='order'>
+        <div>주문하기</div>
+      </router-link>
     </div>
   </div>
 
@@ -38,10 +39,6 @@ import Circle from '../components/ItemCommon/Circle.vue';
 import CartItem from '../components/Cart/CartItem.vue';
 import TheNavbar from '../components/ItemCommon/TheNavbar.vue';
 
-import Repository from '../repositories/RepositoryFactory';
-
-const CartRepository = Repository.get('cart');
-
 export default {
   name: 'Cart',
   components: {
@@ -51,8 +48,8 @@ export default {
   },
   data() {
     return {
-      loading: true,
-      cart: [],
+      loading: false,
+      cart: this.$store.state.cartItem,
       quantity: {},
     };
   },
@@ -72,32 +69,6 @@ export default {
       });
       return totalCost.toLocaleString('ko-KR');
     },
-  },
-  methods: {
-    async getCartInfo() {
-      const result = await CartRepository.getCart();
-      if (result.status === 200) {
-        result.data.cart_item.forEach((item) => {
-          this.cart.push(Object.assign(item, {
-            quantity: 1,
-          }));
-        });
-        this.loading = false;
-      } else {
-        console.log(result);
-      }
-    },
-    addQuantity(id) {
-      const target = this.cart.find((item) => item.product_no === id);
-      target.quantity += 1;
-    },
-    subQuantity(id) {
-      const target = this.cart.find((item) => item.product_no === id);
-      target.quantity -= 1;
-    },
-  },
-  created() {
-    this.getCartInfo();
   },
 };
 </script>
@@ -133,6 +104,8 @@ export default {
   color: rgb(255, 209, 123);
 }
 .cart-order-btn {
+  justify-content: center;
+  align-items: center;
   width: 30%;
   height: 50px;
   border: none;
@@ -140,5 +113,9 @@ export default {
   font-size: 20px;
   background: black;
   color: white;
+  text-decoration: none;
+}
+.cart-empty {
+  padding-top: 30px;
 }
 </style>
