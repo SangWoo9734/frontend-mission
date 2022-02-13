@@ -21,7 +21,7 @@ WishAPI.getWish = jest.fn().mockResolvedValue(response);
 
 let wrapper;
 
-describe('Cart.vue', () => {
+describe('wish.vue', () => {
   beforeEach(async () => {
     wrapper = mount(Wish);
 
