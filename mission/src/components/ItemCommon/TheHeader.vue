@@ -1,7 +1,8 @@
 <template>
-    <div id='header' :class='showHeader ? "flex" :  "header-none flex" ' data-test='header'>
+    <router-link id='header' :class='showHeader ? "flex" :  "header-none flex" '
+      to='/item' data-test='header'>
       <h2>🦁 LionAbly</h2>
-    </div>
+    </router-link>
 </template>
 
 <script>
@@ -55,13 +56,14 @@ export default {
   align-items: center;
   z-index: 10;
   transition: 0.4s all ease-out;
+  text-decoration: none;
+  color:black;
 }
 #header h2{
   width: 100%;
   text-align: left;
   margin-left : 15px;
 }
-
 .header-none {
   box-shadow: none;
   transform: translate(0, -100%);
