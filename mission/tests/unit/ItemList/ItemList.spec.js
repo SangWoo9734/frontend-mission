@@ -141,7 +141,6 @@ describe('ItemList', () => {
     allItems.forEach((item) => {
       expect(item.find('[data-test="item-image"]').exists()).toBeTruthy();
       expect(item.find('[data-test="item-title"]').exists()).toBeTruthy();
-      expect(item.find('[data-test="item-averagerate"]').exists()).toBeTruthy();
       expect(item.find('[data-test="item-discounted-cost"]').exists()).toBeTruthy();
     });
   });
