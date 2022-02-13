@@ -1,11 +1,15 @@
-import { flushPromises, mount } from '@vue/test-utils';
+import { createStore } from 'vuex';
+import { flushPromises, shallowMount, mount } from '@vue/test-utils';
+import { createRouter, createWebHistory } from 'vue-router';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
+import App from '@/App.vue';
 import Cart from '@/views/Cart.vue';
+import Order from '@/views/Order.vue';
 import CartAPI from '@/repositories/CartRepository';
 
 library.add(fas, far);
@@ -22,6 +26,13 @@ const cartData = [
     description: '아주 잘 맞는 수트',
   },
 ];
+const store = createStore({
+  state() {
+    return {
+      cartItem: cartData,
+    };
+  },
+});
 
 const response = {
   data: { cart_item: cartData },
@@ -31,8 +42,9 @@ CartAPI.getCart = jest.fn().mockResolvedValue(response);
 
 describe('Cart.vue', () => {
   beforeEach(async () => {
-    wrapper = mount(Cart, {
+    wrapper = shallowMount(Cart, {
       global: {
+        plugins: [store],
         stubs: { FontAwesomeIcon },
       },
     });
@@ -44,12 +56,6 @@ describe('Cart.vue', () => {
 
   it('renders cart page', () => {
     expect(wrapper.find('#cart').exists()).toBeTruthy();
-  });
-
-  it('called Cart API', async () => {
-    await flushPromises();
-
-    expect(CartAPI.getCart).toHaveBeenCalled();
   });
 
   it('renders page title', () => {
@@ -125,5 +131,38 @@ describe('Cart.vue', () => {
     });
 
     expect(wrapper.find('[data-test="loading"]').exists()).toBeTruthy();
+  });
+
+  it('render items from store', async () => {
+    const routes = [
+      {
+        path: '/order',
+        component: Order,
+      },
+      {
+        path: '/cart',
+        component: Cart,
+      },
+    ];
+
+    const router = createRouter({
+      history: createWebHistory(process.env.BASE_URL),
+      routes,
+    });
+
+    const wrapperApp = mount(App, {
+      global: {
+        plugins: [router, store],
+        stubs: { FontAwesomeIcon },
+      },
+    });
+
+    router.push('/cart');
+
+    await router.isReady();
+    await wrapperApp.find('[data-test="order"]').trigger('click');
+    await flushPromises();
+
+    expect(wrapperApp.findComponent(Order).exists()).toBeTruthy();
   });
 });

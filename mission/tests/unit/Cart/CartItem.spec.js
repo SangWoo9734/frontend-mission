@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils';
+import { createStore } from 'vuex';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
@@ -19,9 +20,29 @@ const testPrice = 10000;
 const testQuantity = 2;
 
 describe('CartItem', () => {
+  const mutations = {
+    addQuantity: jest.fn(),
+    subQuantity: jest.fn(),
+    removeItemFromCart: jest.fn(),
+  };
+
+  const store = createStore({
+    state() {
+      return {
+        cartItem: ['a', 'b'],
+      };
+    },
+    mutations,
+    getters: {
+      getCartItemLength(state) {
+        return state.cartItem.length;
+      },
+    },
+  });
   beforeEach(() => {
     wrapper = mount(CartItem, {
       global: {
+        plugins: [store],
         stubs: { FontAwesomeIcon },
       },
     });
@@ -99,7 +120,7 @@ describe('CartItem', () => {
     expect(wrapper.find('[data-test="quantity-plus"]').exists()).toBeTruthy();
   });
 
-  it('calls $emit when press "plus" button', async () => {
+  it('calls "addQuantity" when press "plus" button', async () => {
     await wrapper.setProps({
       id: testId,
       quantity: testQuantity,
@@ -107,10 +128,10 @@ describe('CartItem', () => {
 
     await wrapper.find('[data-test="quantity-plus"]').trigger('click');
 
-    expect(wrapper.emitted().addQuantity[0]).toEqual([testId]);
+    expect(mutations.addQuantity).toHaveBeenCalled();
   });
 
-  it('calls $emit when press "minus" button', async () => {
+  it('calls "subQuantity" when press "minus" button', async () => {
     await wrapper.setProps({
       id: testId,
       quantity: testQuantity,
@@ -118,18 +139,7 @@ describe('CartItem', () => {
 
     await wrapper.find('[data-test="quantity-minus"]').trigger('click');
 
-    expect(wrapper.emitted().subQuantity[0]).toEqual([testId]);
-  });
-
-  test('if quantity was 0, it can not call $emit when press "minus" button', async () => {
-    await wrapper.setProps({
-      id: testId,
-      quantity: 1,
-    });
-
-    await wrapper.find('[data-test="quantity-minus"]').trigger('click');
-
-    expect(wrapper.emitted().subQuantity).toBeFalsy();
+    expect(mutations.subQuantity).toHaveBeenCalled();
   });
 
   it('renders total cost', () => {
@@ -148,5 +158,14 @@ describe('CartItem', () => {
 
   it('renders delete button', () => {
     expect(wrapper.find('[data-test="delete-button"]').exists()).toBeTruthy();
+  });
+
+  it('call delete method from store', async () => {
+    await wrapper.setProps({
+      id: testId,
+    });
+    await wrapper.find('[data-test="delete-button"]').trigger('click');
+
+    expect(mutations.removeItemFromCart).toHaveBeenCalled();
   });
 });
