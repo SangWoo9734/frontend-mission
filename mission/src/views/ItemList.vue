@@ -18,7 +18,7 @@
     </div>
   </div>
 
-  <Circle v-else class='loading item-center' data-test='loading' />
+  <Circle v-else data-test='loading' />
   <TheNavbar :state='"item"' />
 </template>
 
