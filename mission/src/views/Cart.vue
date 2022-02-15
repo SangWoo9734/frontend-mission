@@ -24,17 +24,20 @@
           <span>{{ calculateTotalCost }}</span> 원
         </p>
       </div>
-      <router-link to='/order' class='cart-order-btn bold flex' data-test='order'>
+      <router-link :to='isAbleToOrder' class='cart-order-btn bold flex' data-test='order'>
         <div>주문하기</div>
       </router-link>
     </div>
   </div>
 
-  <Circle v-else class='loading item-center' data-test='loading' />
+  <Circle v-else data-test='loading' />
   <TheNavbar :state='"cart"' />
 </template>
 
 <script>
+// Library
+import { mapGetters } from 'vuex';
+// Components
 import Circle from '../components/ItemCommon/Circle.vue';
 import CartItem from '../components/Cart/CartItem.vue';
 import TheNavbar from '../components/ItemCommon/TheNavbar.vue';
@@ -49,11 +52,15 @@ export default {
   data() {
     return {
       loading: false,
-      cart: this.$store.state.cartItem,
+      cart: [],
       quantity: {},
     };
   },
   computed: {
+    ...mapGetters('cart', [
+      'GE_CART_ITEM',
+      'GE_CART_LEN',
+    ]),
     countCart() {
       let totalCount = 0;
       this.cart.forEach((item) => {
@@ -69,6 +76,12 @@ export default {
       });
       return totalCost.toLocaleString('ko-KR');
     },
+    isAbleToOrder() {
+      return this.GE_CART_LEN ? '/order' : '/cart';
+    },
+  },
+  created() {
+    this.cart = this.GE_CART_ITEM;
   },
 };
 </script>

@@ -6,7 +6,7 @@
         <font-awesome-icon :icon='m.icon' />
         <p class='navigation-btn-title' data-test='nav-button-title'>{{ m.name }}</p>
         <div v-if='isCartBtn(m.route)' class='cart-count' data-test='cart-count'>
-          {{ getCartItemLength }}
+          {{ GE_CART_LEN }}
         </div>
       </router-link>
     </div>
@@ -57,12 +57,12 @@ export default {
       return this.state === route ? 'navigation-btn flex selectedMenu' : 'navigation-btn flex';
     },
     isCartBtn(route) {
-      return (route === 'cart' && this.getCartItemLength);
+      return (route === 'cart' && this.GE_CART_LEN);
     },
   },
   computed: {
-    ...mapGetters([
-      'getCartItemLength',
+    ...mapGetters('cart', [
+      'GE_CART_LEN',
     ]),
   },
 };

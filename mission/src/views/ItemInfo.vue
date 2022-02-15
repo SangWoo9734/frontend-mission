@@ -23,11 +23,11 @@
       @modalToggle='modalToggle' />
   </div>
 
-  <Circle v-else class='loading item-center' data-test='loading' />
+  <Circle v-else data-test='loading' />
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 import Circle from '../components/ItemCommon/Circle.vue';
 import ItemModal from '../components/ItemInfo/ItemModal.vue';
 import ProductInfo from '../components/ProductInfo.vue';
@@ -58,6 +58,9 @@ export default {
     this.getItemInfo(this.id);
   },
   methods: {
+    ...mapActions('cart', [
+      'AC_ADD_ITEM_IN_CART',
+    ]),
     async getItemInfo(id) {
       try {
         const result = await ItemRepository.getItemInfo(id);
@@ -71,20 +74,20 @@ export default {
       this.modalState = !this.modalState;
     },
     addItemInCart() {
-      this.isAlreadyInCart = this.getCartItems.filter(
+      this.isAlreadyInCart = this.storeCartItem.filter(
         (cartItem) => cartItem.product_no === this.id,
       ).length === 0;
       this.modalToggle();
-      this.$store.commit('addItemInCart', this.itemInfo);
+      this.AC_ADD_ITEM_IN_CART(this.itemInfo);
     },
     buyDirect() {
-      this.$store.commit('addItemInCart', this.itemInfo);
+      this.AC_ADD_ITEM_IN_CART(this.itemInfo);
     },
   },
   computed: {
-    ...mapGetters([
-      'getCartItems',
-    ]),
+    ...mapGetters('cart', {
+      storeCartItem: 'GE_CART_ITEM',
+    }),
     commaWithPrice() {
       return this.itemInfo.price.toLocaleString('ko-KR');
     },

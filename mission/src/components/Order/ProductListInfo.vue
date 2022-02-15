@@ -13,7 +13,7 @@
         <p>장바구니가 비어있습니다.</p>
       </div>
       <div v-else class='order-item-row order-table-item'
-        v-for='item in items' :key='item.prodcut_no' data-test='order-table-row'>
+        v-for='item in orderItems' :key='item.prodcut_no' data-test='order-table-row'>
         <div class='order-item-product flex'>
           <div class='order-item-image'>
             <img :src='item.image' alt='item-image' data-test='item-image'>
@@ -79,7 +79,7 @@ import CouponModal from './CouponModal.vue';
 export default {
   name: 'ProductListInfo',
   props: {
-    items: { type: Array, default: null },
+    orderItems: { type: Array, default: null },
     totalFinalPrice: { type: Number, default: 0 },
   },
   components: {
@@ -117,11 +117,11 @@ export default {
   },
   computed: {
     isEmpty() {
-      return this.items.length === 0;
+      return this.orderItems.length === 0;
     },
     totalCount() {
       let count = 0;
-      this.items.forEach((item) => {
+      this.orderItems.forEach((item) => {
         count += item.quantity;
       });
 
@@ -129,7 +129,7 @@ export default {
     },
     totalOriginalPrice() {
       let originalPrice = 0;
-      this.items.forEach((item) => {
+      this.orderItems.forEach((item) => {
         originalPrice += item.original_price * item.quantity;
       });
 
@@ -137,7 +137,7 @@ export default {
     },
     totalPrice() {
       let discountingPrice = 0;
-      this.items.forEach((item) => {
+      this.orderItems.forEach((item) => {
         discountingPrice += (item.original_price - item.price) * item.quantity;
       });
 

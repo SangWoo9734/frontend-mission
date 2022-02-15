@@ -5,7 +5,11 @@
       <h2 class='sub-navbar-title' data-test='order-title'>주문확인</h2>
     </div>
     <!-- 제품 확인 -->
-    <ProductListInfo :items='items' :totalFinalPrice='totalFinalPrice' @addCoupon='addCoupon'/>
+    <ProductListInfo
+      :orderItems='orderItems'
+      :totalFinalPrice='totalFinalPrice'
+      @addCoupon='addCoupon'
+    />
     <!-- 배송 확인 -->
     <DeliveryInfo />
     <!-- 결제 정보 -->
@@ -18,10 +22,13 @@
     </div>
   </div>
 
-  <Circle v-else class='loading item-center' data-test='loading' />
+  <Circle v-else data-test='loading' />
 </template>
 
 <script>
+// Library
+import { mapGetters } from 'vuex';
+
 import Circle from '../components/ItemCommon/Circle.vue';
 import ProductListInfo from '../components/Order/ProductListInfo.vue';
 import DeliveryInfo from '../components/Order/DeliveryInfo.vue';
@@ -38,13 +45,16 @@ export default {
   data() {
     return {
       loading: false,
-      items: this.$store.state.cartItem,
+      orderItems: [],
     };
   },
   computed: {
+    ...mapGetters('cart', [
+      'GE_CART_ITEM',
+    ]),
     totalFinalPrice() {
       let price = 0;
-      this.items.forEach((item) => {
+      this.orderItems.forEach((item) => {
         price += item.price * item.quantity;
       });
 
@@ -55,6 +65,9 @@ export default {
     priceWithComma(price) {
       return price.toLocaleString('ko-KR');
     },
+  },
+  created() {
+    this.orderItems = this.GE_CART_ITEM;
   },
 };
 </script>

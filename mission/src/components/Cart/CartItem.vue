@@ -43,6 +43,9 @@
 </template>
 
 <script>
+// Library
+import { mapActions } from 'vuex';
+
 export default {
   name: 'CartItem',
   props: {
@@ -73,14 +76,19 @@ export default {
     },
   },
   methods: {
+    ...mapActions('cart', [
+      'AC_ADD_QUANTITY',
+      'AC_SUB_QUANTITY',
+      'AC_REMOVE_ITEM_FROM_CART',
+    ]),
     addQuantity() {
-      this.$store.commit('addQuantity', this.id);
+      this.AC_ADD_QUANTITY(this.id);
     },
     subQuantity() {
-      this.$store.commit('subQuantity', this.id);
+      this.AC_SUB_QUANTITY(this.id);
     },
     removeItemFromCart() {
-      this.$store.commit('removeItemFromCart', this.id);
+      this.AC_REMOVE_ITEM_FROM_CART(this.id);
     },
   },
 };
