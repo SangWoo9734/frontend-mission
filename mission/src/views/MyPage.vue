@@ -24,12 +24,12 @@
     </div>
   </div>
 
-  <Circle v-else data-test='loading'/>
+  <LoadingCircle v-else data-test='loading'/>
   <TheNavbar :state='"mypage"' />
 </template>
 
 <script>
-import Circle from '../components/ItemCommon/Circle.vue';
+import LoadingCircle from '../components/ItemCommon/LoadingCircle.vue';
 import Repository from '../repositories/RepositoryFactory';
 import TheNavbar from '../components/ItemCommon/TheNavbar.vue';
 
@@ -38,7 +38,7 @@ const UserRepository = Repository.get('user');
 export default {
   name: 'MyPage',
   components: {
-    Circle,
+    LoadingCircle,
     TheNavbar,
   },
   data() {

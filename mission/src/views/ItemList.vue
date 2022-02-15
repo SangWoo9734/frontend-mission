@@ -18,12 +18,12 @@
     </div>
   </div>
 
-  <Circle v-else data-test='loading' />
+  <LoadingCircle v-else data-test='loading' />
   <TheNavbar :state='"item"' />
 </template>
 
 <script>
-import Circle from '../components/ItemCommon/Circle.vue';
+import LoadingCircle from '../components/ItemCommon/LoadingCircle.vue';
 import ItemSort from '../components/ItemList/ItemSort.vue';
 import Item from '../components/ItemList/Item.vue';
 import TheNavbar from '../components/ItemCommon/TheNavbar.vue';
@@ -35,7 +35,7 @@ const ItemRepository = Repository.get('item');
 export default {
   name: 'ItemListPage',
   components: {
-    Circle,
+    LoadingCircle,
     ItemSort,
     Item,
     TheNavbar,

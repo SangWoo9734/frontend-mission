@@ -18,12 +18,12 @@
     </div>
   </div>
 
-  <Circle v-else data-test='loading' />
+  <LoadingCircle v-else data-test='loading' />
   <TheNavbar :state='"wish"' />
 </template>
 
 <script>
-import Circle from '../components/ItemCommon/Circle.vue';
+import LoadingCircle from '../components/ItemCommon/LoadingCircle.vue';
 import WishItem from '../components/Wish/WishItem.vue';
 import TheNavbar from '../components/ItemCommon/TheNavbar.vue';
 
@@ -40,7 +40,7 @@ export default {
     };
   },
   components: {
-    Circle,
+    LoadingCircle,
     WishItem,
     TheNavbar,
   },

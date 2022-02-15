@@ -23,14 +23,14 @@
       @modalToggle='modalToggle' />
   </div>
 
-  <Circle v-else data-test='loading' />
+  <LoadingCircle v-else data-test='loading' />
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex';
-import Circle from '../components/ItemCommon/Circle.vue';
+import LoadingCircle from '../components/ItemCommon/LoadingCircle.vue';
 import ItemModal from '../components/ItemInfo/ItemModal.vue';
-import ProductInfo from '../components/ProductInfo.vue';
+import ProductInfo from '../components/ItemInfo/ProductInfo.vue';
 
 import Repository from '../repositories/RepositoryFactory';
 
@@ -50,7 +50,7 @@ export default {
     id: { type: String, default: '' },
   },
   components: {
-    Circle,
+    LoadingCircle,
     ProductInfo,
     ItemModal,
   },

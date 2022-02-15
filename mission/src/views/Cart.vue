@@ -30,7 +30,7 @@
     </div>
   </div>
 
-  <Circle v-else data-test='loading' />
+  <LoadingCircle v-else data-test='loading' />
   <TheNavbar :state='"cart"' />
 </template>
 
@@ -38,7 +38,7 @@
 // Library
 import { mapGetters } from 'vuex';
 // Components
-import Circle from '../components/ItemCommon/Circle.vue';
+import LoadingCircle from '../components/ItemCommon/LoadingCircle.vue';
 import CartItem from '../components/Cart/CartItem.vue';
 import TheNavbar from '../components/ItemCommon/TheNavbar.vue';
 
@@ -46,7 +46,7 @@ export default {
   name: 'Cart',
   components: {
     CartItem,
-    Circle,
+    LoadingCircle,
     TheNavbar,
   },
   data() {

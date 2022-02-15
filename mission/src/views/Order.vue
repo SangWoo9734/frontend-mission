@@ -22,14 +22,14 @@
     </div>
   </div>
 
-  <Circle v-else data-test='loading' />
+  <LoadingCircle v-else data-test='loading' />
 </template>
 
 <script>
 // Library
 import { mapGetters } from 'vuex';
 
-import Circle from '../components/ItemCommon/Circle.vue';
+import LoadingCircle from '../components/ItemCommon/LoadingCircle.vue';
 import ProductListInfo from '../components/Order/ProductListInfo.vue';
 import DeliveryInfo from '../components/Order/DeliveryInfo.vue';
 import CreditInfo from '../components/Order/CreditInfo.vue';
@@ -37,7 +37,7 @@ import CreditInfo from '../components/Order/CreditInfo.vue';
 export default {
   name: 'Order',
   components: {
-    Circle,
+    LoadingCircle,
     ProductListInfo,
     DeliveryInfo,
     CreditInfo,
