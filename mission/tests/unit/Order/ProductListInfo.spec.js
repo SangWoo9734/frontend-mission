@@ -1,7 +1,10 @@
 import { mount } from '@vue/test-utils';
+import { createStore } from 'vuex';
 
 import ProductListInfo from '@/components/Order/ProductListInfo.vue';
 import CouponModal from '@/components/Order/CouponModal.vue';
+
+import cartStore from '@/store/modules/cartStore';
 
 let wrapper;
 
@@ -22,12 +25,33 @@ const testData = [
   },
 ];
 
+const store = createStore({
+  state: {
+    arr: 1,
+  },
+  mutaitions: {
+    addArr: (state) => {
+      state.arr += 1;
+    },
+  },
+  actions: {
+    ac_addArr: ({ commit }) => {
+      commit('addArr');
+    },
+  },
+  modules: {
+    cart: cartStore,
+  },
+});
+
 describe('ProductListInfo', () => {
   it('render Product list info component', () => {
     wrapper = mount(ProductListInfo, {
+      global: {
+        plugins: [store],
+      },
       propsData: {
-        items: testData,
-        totalFinalPrice: 34000,
+        orderItems: testData,
       },
     });
 
@@ -37,9 +61,11 @@ describe('ProductListInfo', () => {
   describe('When items is not NULL', () => {
     beforeEach(() => {
       wrapper = mount(ProductListInfo, {
+        global: {
+          plugins: [store],
+        },
         propsData: {
-          items: [],
-          totalFinalPrice: 34000,
+          orderItems: [],
         },
       });
     });
@@ -95,10 +121,16 @@ describe('ProductListInfo', () => {
 
   describe('When items is not NULL', () => {
     beforeEach(async () => {
+      // 직접 state에 접근하는 것 보다 initCart로 불러오는 것이 더 적절해보임
+      // 구현 실패중
+      cartStore.state.cartItem = testData;
+
       wrapper = mount(ProductListInfo, {
+        global: {
+          plugins: [store],
+        },
         propsData: {
-          items: testData,
-          totalFinalPrice: 34000,
+          orderItems: testData,
         },
       });
 
@@ -146,15 +178,18 @@ describe('ProductListInfo', () => {
       expect(wrapper.find('[data-test="order-product-finalPrice"]').exists()).toBeTruthy();
     });
 
-    it('render right cost of final price', () => {
+    it('render right cost of final price', async () => {
       expect(wrapper.find('[data-test="order-product-finalPrice"]').text()).toContain('34,000');
     });
   });
 
   describe('Test rows', () => {
     wrapper = mount(ProductListInfo, {
+      global: {
+        plugins: [store],
+      },
       propsData: {
-        items: [testData[0]],
+        orderItems: [testData[0]],
         totalFinalPrice: 34000,
       },
     });

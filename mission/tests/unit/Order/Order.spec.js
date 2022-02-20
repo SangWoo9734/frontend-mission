@@ -6,6 +6,8 @@ import ProductListInfo from '@/components/Order/ProductListInfo.vue';
 import DeliveryInfo from '@/components/Order/DeliveryInfo.vue';
 import CreditInfo from '@/components/Order/CreditInfo.vue';
 
+import cartStore from '@/store/modules/cartStore';
+
 let wrapper;
 const testData = [
   {
@@ -26,19 +28,13 @@ const testData = [
 
 describe('Order', () => {
   const store = createStore({
-    state() {
-      return {
-        cartItem: testData,
-      };
-    },
-    getters: {
-      getCartItems(state) {
-        return state.cartItem;
-      },
+    modules: {
+      cart: cartStore,
     },
   });
 
   beforeEach(async () => {
+    cartStore.state.cartItem = testData;
     wrapper = shallowMount(Order, {
       global: {
         plugins: [store],

@@ -46,7 +46,7 @@ describe('Coupon Modal', () => {
 
     await wrapper.find('[data-test="coupon-apply"]').trigger('click');
 
-    expect(wrapper.emitted().applyCoupon[0]).toEqual([testCoupon[0].price]);
+    expect(wrapper.emitted().applyCoupon[0]).toEqual([testCoupon[0]]);
   });
 
   it('called $emit when press close button', async () => {

@@ -8,7 +8,7 @@ const testName = 'testname';
 const testDescription = 'This is test description.';
 const testPrice = 10000;
 
-describe('Cart.vue', () => {
+describe('WishItem.vue', () => {
   beforeEach(() => {
     wrapper = mount(WishItem);
   });
