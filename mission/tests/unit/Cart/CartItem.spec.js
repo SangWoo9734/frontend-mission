@@ -1,152 +1,170 @@
-import { mount } from '@vue/test-utils';
+// import { mount } from '@vue/test-utils';
+// import { createStore } from 'vuex';
 
-import { library } from '@fortawesome/fontawesome-svg-core';
-import { fas } from '@fortawesome/free-solid-svg-icons';
-import { far } from '@fortawesome/free-regular-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+// import { library } from '@fortawesome/fontawesome-svg-core';
+// import { fas } from '@fortawesome/free-solid-svg-icons';
+// import { far } from '@fortawesome/free-regular-svg-icons';
+// import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+// import cartStore from '@/store/modules/cartStore';
 
-import CartItem from '@/components/Cart/CartItem.vue';
+// import CartItem from '@/components/Cart/CartItem.vue';
 
-library.add(fas, far);
+// library.add(fas, far);
 
-let wrapper;
+// let wrapper;
 
-const testId = 'abc123';
-const testImage = 'www.test.com';
-const testName = 'testname';
-const testOriginalPrice = 20000;
-const testPrice = 10000;
-const testQuantity = 2;
+// const testId = 'abc123';
+// const testImage = 'www.test.com';
+// const testName = 'testname';
+// const testOriginalPrice = 20000;
+// const testPrice = 10000;
+// const testQuantity = 2;
 
-describe('CartItem', () => {
-  beforeEach(() => {
-    wrapper = mount(CartItem, {
-      global: {
-        stubs: { FontAwesomeIcon },
-      },
-    });
-  });
+// describe('CartItem', () => {
+//   const store = createStore({
+//     mutations: {
+//       MU_INIT_CART: (state, payload) => {
+//         state.cartItem = payload;
+//       },
+//     },
+//     actions: {
+//       AC_INIT_CART: ({ commit }, payload) => {
+//         commit('MU_INIT_CART', payload);
+//       },
+//     },
+//     modules: {
+//       cart: cartStore,
+//     },
+//   });
 
-  it('renders CartItem components', () => {
-    expect(wrapper.find('#cart-item').exists()).toBeTruthy();
-  });
+//   beforeEach(() => {
+//     wrapper = mount(CartItem, {
+//       global: {
+//         plugins: [store],
+//         stubs: { FontAwesomeIcon },
+//       },
+//     });
+//   });
 
-  it('renders item image', () => {
-    expect(wrapper.find('[data-test="item-image"]').exists()).toBeTruthy();
-  });
+//   it('renders CartItem components', () => {
+//     expect(wrapper.find('#cart-item').exists()).toBeTruthy();
+//   });
 
-  it('renders right image of item', async () => {
-    await wrapper.setProps({
-      image: testImage,
-    });
+//   it('renders item image', () => {
+//     expect(wrapper.find('[data-test="item-image"]').exists()).toBeTruthy();
+//   });
 
-    expect(wrapper.find('[data-test="item-image"]').attributes().src).toEqual(testImage);
-  });
+//   it('renders right image of item', async () => {
+//     await wrapper.setProps({
+//       image: testImage,
+//     });
 
-  it('renders right image of item', async () => {
-    const testDefaultImage = 'default';
-    await wrapper.setProps({
-      image: '',
-    });
-    await wrapper.setData({
-      defaultImage: testDefaultImage,
-    });
+//     expect(wrapper.find('[data-test="item-image"]').attributes().src).toEqual(testImage);
+//   });
 
-    expect(wrapper.find('[data-test="item-image"]').attributes().src).toEqual(testDefaultImage);
-  });
+//   it('renders right image of item', async () => {
+//     const testDefaultImage = 'default';
+//     await wrapper.setProps({
+//       image: '',
+//     });
+//     await wrapper.setData({
+//       defaultImage: testDefaultImage,
+//     });
 
-  it('renders item name', () => {
-    expect(wrapper.find('[data-test="item-name"]').exists()).toBeTruthy();
-  });
+//     expect(wrapper.find('[data-test="item-image"]').attributes().src).toEqual(testDefaultImage);
+//   });
 
-  it('renders right name of item', async () => {
-    await wrapper.setProps({
-      name: testName,
-    });
+//   it('renders item name', () => {
+//     expect(wrapper.find('[data-test="item-name"]').exists()).toBeTruthy();
+//   });
 
-    expect(wrapper.find('[data-test="item-name"]').text()).toEqual(testName);
-  });
+//   it('renders right name of item', async () => {
+//     await wrapper.setProps({
+//       name: testName,
+//     });
 
-  it('renders original price of item', () => {
-    expect(wrapper.find('[data-test="item-originalprice"]').exists()).toBeTruthy();
-  });
+//     expect(wrapper.find('[data-test="item-name"]').text()).toEqual(testName);
+//   });
 
-  it('renders right original price with format', async () => {
-    const originalPriceWithFormat = '20,000';
-    await wrapper.setProps({
-      originalPrice: testOriginalPrice,
-    });
+//   it('renders original price of item', () => {
+//     expect(wrapper.find('[data-test="item-originalprice"]').exists()).toBeTruthy();
+//   });
 
-    expect(wrapper.find('[data-test="item-originalprice"]').text()).toContain(originalPriceWithFormat);
-  });
+//   it('renders right original price with format', async () => {
+//     const originalPriceWithFormat = '20,000';
+//     await wrapper.setProps({
+//       originalPrice: testOriginalPrice,
+//     });
 
-  it('renders (discounted) price of item', () => {
-    expect(wrapper.find('[data-test="item-price"]').exists()).toBeTruthy();
-  });
+//     expect(wrapper.find('[data-test="item-originalprice"]').text()).
+// toContain(originalPriceWithFormat);
+//   });
 
-  it('renders right original price with format', async () => {
-    const priceWithFormat = '10,000';
-    await wrapper.setProps({
-      price: testPrice,
-    });
+//   it('renders (discounted) price of item', () => {
+//     expect(wrapper.find('[data-test="item-price"]').exists()).toBeTruthy();
+//   });
 
-    expect(wrapper.find('[data-test="item-price"]').text()).toContain(priceWithFormat);
-  });
+//   it('renders right original price with format', async () => {
+//     const priceWithFormat = '10,000';
+//     await wrapper.setProps({
+//       price: testPrice,
+//     });
 
-  it('renders quantity components', () => {
-    expect(wrapper.find('[data-test="quantity-minus"]').exists()).toBeTruthy();
-    expect(wrapper.find('[data-test="quantity"]').exists()).toBeTruthy();
-    expect(wrapper.find('[data-test="quantity-plus"]').exists()).toBeTruthy();
-  });
+//     expect(wrapper.find('[data-test="item-price"]').text()).toContain(priceWithFormat);
+//   });
 
-  it('calls $emit when press "plus" button', async () => {
-    await wrapper.setProps({
-      id: testId,
-      quantity: testQuantity,
-    });
+//   it('renders quantity components', () => {
+//     expect(wrapper.find('[data-test="quantity-minus"]').exists()).toBeTruthy();
+//     expect(wrapper.find('[data-test="quantity"]').exists()).toBeTruthy();
+//     expect(wrapper.find('[data-test="quantity-plus"]').exists()).toBeTruthy();
+//   });
 
-    await wrapper.find('[data-test="quantity-plus"]').trigger('click');
+//   it('calls "addQuantity" when press "plus" button', async () => {
+//     await wrapper.setProps({
+//       id: testId,
+//       quantity: testQuantity,
+//     });
 
-    expect(wrapper.emitted().addQuantity[0]).toEqual([testId]);
-  });
+//     await wrapper.find('[data-test="quantity-plus"]').trigger('click');
 
-  it('calls $emit when press "minus" button', async () => {
-    await wrapper.setProps({
-      id: testId,
-      quantity: testQuantity,
-    });
+//     expect(store.actions.AC_ADD_QUANTITY).toHaveBeenCalled();
+//   });
 
-    await wrapper.find('[data-test="quantity-minus"]').trigger('click');
+//   it('calls "subQuantity" when press "minus" button', async () => {
+//     await wrapper.setProps({
+//       id: testId,
+//       quantity: testQuantity,
+//     });
 
-    expect(wrapper.emitted().subQuantity[0]).toEqual([testId]);
-  });
+//     await wrapper.find('[data-test="quantity-minus"]').trigger('click');
 
-  test('if quantity was 0, it can not call $emit when press "minus" button', async () => {
-    await wrapper.setProps({
-      id: testId,
-      quantity: 1,
-    });
+//     expect(mutations.subQuantity).toHaveBeenCalled();
+//   });
 
-    await wrapper.find('[data-test="quantity-minus"]').trigger('click');
+//   it('renders total cost', () => {
+//     expect(wrapper.find('[data-test="total-cost"]').exists()).toBeTruthy();
+//   });
 
-    expect(wrapper.emitted().subQuantity).toBeFalsy();
-  });
+//   it('renders right total price with format', async () => {
+//     const priceWithFormat = '20,000';
+//     await wrapper.setProps({
+//       price: testPrice,
+//       quantity: testQuantity,
+//     });
 
-  it('renders total cost', () => {
-    expect(wrapper.find('[data-test="total-cost"]').exists()).toBeTruthy();
-  });
+//     expect(wrapper.find('[data-test="total-cost"]').text()).toContain(priceWithFormat);
+//   });
 
-  it('renders right total price with format', async () => {
-    const priceWithFormat = '20,000';
-    await wrapper.setProps({
-      price: testPrice,
-      quantity: testQuantity,
-    });
+//   it('renders delete button', () => {
+//     expect(wrapper.find('[data-test="delete-button"]').exists()).toBeTruthy();
+//   });
 
-    expect(wrapper.find('[data-test="total-cost"]').text()).toContain(priceWithFormat);
-  });
+//   it('call delete method from store', async () => {
+//     await wrapper.setProps({
+//       id: testId,
+//     });
+//     await wrapper.find('[data-test="delete-button"]').trigger('click');
 
-  it('renders delete button', () => {
-    expect(wrapper.find('[data-test="delete-button"]').exists()).toBeTruthy();
-  });
-});
+//     expect(mutations.removeItemFromCart).toHaveBeenCalled();
+//   });
+// });

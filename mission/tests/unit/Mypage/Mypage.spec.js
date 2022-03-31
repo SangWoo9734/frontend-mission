@@ -1,9 +1,11 @@
 import { flushPromises, mount } from '@vue/test-utils';
+import { createStore } from 'vuex';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import cartStore from '@/store/modules/cartStore';
 
 import MyPage from '@/views/MyPage.vue';
 
@@ -23,12 +25,19 @@ const response = {
   data: userData,
 };
 
+const store = createStore({
+  modules: {
+    cart: cartStore,
+  },
+});
+
 MyPageAPI.getInfo = jest.fn().mockResolvedValue(response);
 
 describe('My Page', () => {
   beforeEach(async () => {
     wrapper = mount(MyPage, {
       global: {
+        plugins: [store],
         stubs: { FontAwesomeIcon },
       },
     });

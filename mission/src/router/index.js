@@ -4,6 +4,7 @@ import ItemInfo from '@/views/ItemInfo.vue';
 import Cart from '@/views/Cart.vue';
 import Wish from '@/views/Wish.vue';
 import MyPage from '@/views/MyPage.vue';
+import Order from '@/views/Order.vue';
 
 const routes = [
   {
@@ -34,6 +35,12 @@ const routes = [
     path: '/mypage',
     name: 'mypage',
     component: MyPage,
+    props: true,
+  },
+  {
+    path: '/order',
+    name: 'order',
+    component: Order,
     props: true,
   },
   {

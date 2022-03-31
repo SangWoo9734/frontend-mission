@@ -1,15 +1,18 @@
 import { flushPromises, mount } from '@vue/test-utils';
-import ProductInfo from '@/components/ProductInfo.vue';
-import ProductImage from '@/components/ProductImage.vue';
-import ProductSeller from '@/components/ProductSeller.vue';
-import ProductCost from '@/components/ProductCost.vue';
-import ProductDescription from '@/components/ProductDescription.vue';
-import ProductReview from '@/components/ProductReview.vue';
-import ProductReviewDetail from '@/components/ProductReviewDetail.vue';
-import ProductBuy from '@/components/ProductBuy.vue';
+import { createStore } from 'vuex';
+
+import ProductInfo from '@/components/ItemInfo/ProductInfo.vue';
+import ProductImage from '@/components/ItemInfo/ProductImage.vue';
+import ProductSeller from '@/components/ItemInfo/ProductSeller.vue';
+import ProductCost from '@/components/ItemInfo/ProductCost.vue';
+import ProductDescription from '@/components/ItemInfo/ProductDescription.vue';
+import ProductReview from '@/components/ItemInfo/ProductReview.vue';
+import ProductReviewDetail from '@/components/ItemInfo/ProductReviewDetail.vue';
+import ItemModal from '@/components/ItemInfo/ItemModal.vue';
 import ItemInfo from '@/views/ItemInfo.vue';
 
 import ItemAPI from '@/repositories/ItemRepository';
+import cartStore from '@/store/modules/cartStore';
 
 let wrapper;
 
@@ -44,14 +47,26 @@ const response = {
   data: { item: testData },
 };
 
+const store = createStore({
+  modules: {
+    cart: cartStore,
+  },
+});
+
 ItemAPI.getItemInfo = jest.fn().mockResolvedValue(response);
 
 describe('ItemInfoPage', () => {
   beforeEach(() => {
-    wrapper = mount(ItemInfo);
+    wrapper = mount(ItemInfo, {
+      global: {
+        plugins: [store],
+      },
+    });
   });
+
   it('renders ItemInfoPage', async () => {
     await wrapper.setData({
+      itemInfo: testData,
       loading: false,
     });
     expect(wrapper.find('#item-info-page').exists()).toBeTruthy();
@@ -65,6 +80,7 @@ describe('ItemInfoPage', () => {
 
   it('render loading when loading state is false', async () => {
     await wrapper.setData({
+      itemInfo: testData,
       loading: false,
     });
 
@@ -83,7 +99,11 @@ describe('ItemInfoPage', () => {
 describe('ProductInfo', () => {
   describe('ProductImage', () => {
     it('contains product image', () => {
-      wrapper = mount(ProductImage);
+      wrapper = mount(ProductImage, {
+        global: {
+          plugins: [store],
+        },
+      });
 
       expect(wrapper.find('#product-image').exists()).toBe(true);
     });
@@ -92,6 +112,9 @@ describe('ProductInfo', () => {
   describe('ProductSeller', () => {
     beforeEach(() => {
       wrapper = mount(ProductSeller, {
+        global: {
+          plugins: [store],
+        },
         propsData: {
           hash_tags: testData.seller.hash_tags,
           name: testData.seller.name,
@@ -117,6 +140,9 @@ describe('ProductInfo', () => {
   describe('Product Title', () => {
     beforeEach(() => {
       wrapper = mount(ProductInfo, {
+        global: {
+          plugins: [store],
+        },
         propsData: {
           item_name: testData.name,
         },
@@ -134,6 +160,9 @@ describe('ProductInfo', () => {
   describe('ProductCost', () => {
     beforeEach(() => {
       wrapper = mount(ProductCost, {
+        global: {
+          plugins: [store],
+        },
         propsData: {
           originalPrice: testData.originalPrice,
           price: testData.price,
@@ -160,6 +189,9 @@ describe('ProductInfo', () => {
   describe('ProductDescription', () => {
     beforeEach(() => {
       wrapper = mount(ProductDescription, {
+        global: {
+          plugins: [store],
+        },
         propsData: {
           description: '<p>Test Description</p>',
         },
@@ -178,6 +210,9 @@ describe('ProductInfo', () => {
   describe('ProductReview', () => {
     beforeEach(() => {
       wrapper = mount(ProductReview, {
+        global: {
+          plugins: [store],
+        },
         propsData: {
           user_review: [{ id: '11' }],
         },
@@ -192,6 +227,9 @@ describe('ProductInfo', () => {
   describe('ProductReviewDetail', () => {
     beforeEach(() => {
       wrapper = mount(ProductReviewDetail, {
+        global: {
+          plugins: [store],
+        },
         propsData: {
           content: testData.reviews.content,
           created: testData.reviews.created,
@@ -219,20 +257,118 @@ describe('ProductInfo', () => {
 });
 
 describe('Product Buy', () => {
-  beforeEach(() => {
-    wrapper = mount(ProductBuy, {
-      propsData: {
-        price: 20000,
+  beforeEach(async () => {
+    wrapper = mount(ItemInfo, {
+      global: {
+        plugins: [store],
       },
+    });
+
+    await wrapper.setData({
+      itemInfo: testData,
+      loading: false,
     });
   });
   it('contains "구매" button', () => {
     expect(wrapper.find('#btn-buy').exists()).toBe(true);
   });
+
+  it('add item in cartItem when user press "구매" button', async () => {
+    cartStore.actions.AC_ADD_ITEM_IN_CART = jest.fn();
+
+    const buyDirect = jest.fn().mockImplementation(
+      () => cartStore.actions.AC_ADD_ITEM_IN_CART(),
+    );
+    const getItemInfo = jest.fn();
+
+    wrapper = mount(ItemInfo, {
+      global: {
+        plugins: [store],
+      },
+      methods: {
+        buyDirect,
+        getItemInfo,
+      },
+    });
+
+    await wrapper.setData({
+      itemInfo: testData,
+      loading: false,
+    });
+
+    await wrapper.find('#btn-buy').trigger('click');
+
+    expect(buyDirect).toHaveBeenCalledTimes(1);
+    expect(cartStore.actions.AC_ADD_ITEM_IN_CART).toHaveBeenCalledTimes(1);
+  });
+
+  it('move cart when click "장바구니 이동"', async () => {
+    expect(wrapper.find('[data-test="move-order"]').html()).toContain('to="/order"');
+  });
+
   it('contains "장바구니" button', () => {
     expect(wrapper.find('#btn-cart').exists()).toBe(true);
   });
+
   it('contains right format of cost that includes ","', () => {
     expect(wrapper.find('#btn-buy p').text()).toContain('20,000');
+  });
+
+  it('add item in cartItem when user press "장바구니 담기" button', async () => {
+    cartStore.actions.AC_ADD_ITEM_IN_CART = jest.fn();
+
+    const addItemInCart = jest.fn().mockImplementation(
+      () => cartStore.actions.AC_ADD_ITEM_IN_CART(),
+    );
+    const getItemInfo = jest.fn();
+
+    wrapper = mount(ItemInfo, {
+      global: {
+        plugins: [store],
+      },
+      methods: {
+        addItemInCart,
+        getItemInfo,
+      },
+    });
+
+    await wrapper.setData({
+      itemInfo: testData,
+      loading: false,
+    });
+
+    await wrapper.find('#btn-cart').trigger('click');
+
+    expect(addItemInCart).toHaveBeenCalledTimes(1);
+    expect(cartStore.actions.AC_ADD_ITEM_IN_CART).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('Item Modal', () => {
+  beforeEach(async () => {
+    wrapper = mount(ItemInfo, {
+      global: {
+        plugins: [store],
+      },
+    });
+
+    await wrapper.setData({
+      itemInfo: testData,
+      loading: false,
+    });
+  });
+
+  it('renders modal when modal state is true', async () => {
+    await wrapper.setData({
+      modalState: false,
+    });
+    expect(wrapper.findComponent(ItemModal).exists()).toBeFalsy();
+  });
+
+  it('renders modal when modal state is true', async () => {
+    await wrapper.setData({
+      modalState: true,
+    });
+    expect(wrapper.findComponent(ItemModal).exists()).toBeTruthy();
   });
 });

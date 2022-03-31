@@ -1,11 +1,16 @@
-import { flushPromises, mount } from '@vue/test-utils';
+import { flushPromises, shallowMount, mount } from '@vue/test-utils';
+import { createRouter, createWebHistory } from 'vue-router';
+import { createStore } from 'vuex';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import cartStore from '@/store/modules/cartStore';
 
+import App from '@/App.vue';
 import Cart from '@/views/Cart.vue';
+import Order from '@/views/Order.vue';
 import CartAPI from '@/repositories/CartRepository';
 
 library.add(fas, far);
@@ -20,6 +25,7 @@ const cartData = [
     price: 198000,
     original_price: 298000,
     description: '아주 잘 맞는 수트',
+    quantity: 2,
   },
 ];
 
@@ -27,12 +33,21 @@ const response = {
   data: { cart_item: cartData },
 };
 
+const store = createStore({
+  modules: {
+    cart: cartStore,
+  },
+});
+
 CartAPI.getCart = jest.fn().mockResolvedValue(response);
 
 describe('Cart.vue', () => {
   beforeEach(async () => {
-    wrapper = mount(Cart, {
+    cartStore.state.cartItem = cartData;
+
+    wrapper = shallowMount(Cart, {
       global: {
+        plugins: [store],
         stubs: { FontAwesomeIcon },
       },
     });
@@ -46,19 +61,13 @@ describe('Cart.vue', () => {
     expect(wrapper.find('#cart').exists()).toBeTruthy();
   });
 
-  it('called Cart API', async () => {
-    await flushPromises();
-
-    expect(CartAPI.getCart).toHaveBeenCalled();
-  });
-
   it('renders page title', () => {
     expect(wrapper.find('[data-test="cart-title"]').exists()).toBeTruthy();
     expect(wrapper.find('[data-test="cart-title"]').text()).toEqual('🛒 Cart');
   });
 
-  it('renders number of items which in cart now', () => {
-    wrapper.setData({
+  it('renders number of items which in cart now', async () => {
+    await wrapper.setData({
       cart: [
         'item1', 'item2', 'item3',
       ],
@@ -92,18 +101,13 @@ describe('Cart.vue', () => {
   });
 
   it('renders right total cost', async () => {
-    await wrapper.setData({
-      cart: [
-        { price: 100, quantity: 3 },
-        { price: 300, quantity: 2 },
-        { price: 700, quantity: 1 },
-      ],
-    });
+    cartStore.state.cartItem = cartData;
 
-    expect(wrapper.find('[data-test="cart-totalcost"]').text()).toContain('1,600');
+    expect(wrapper.find('[data-test="cart-totalcost"]').text()).toContain('396,000');
   });
 
   it('renders right total cost if no item in cart', async () => {
+    cartStore.state.cartItem = [];
     await wrapper.setData({
       cart: [],
     });
@@ -125,5 +129,38 @@ describe('Cart.vue', () => {
     });
 
     expect(wrapper.find('[data-test="loading"]').exists()).toBeTruthy();
+  });
+
+  it('render items from store', async () => {
+    const routes = [
+      {
+        path: '/order',
+        component: Order,
+      },
+      {
+        path: '/cart',
+        component: Cart,
+      },
+    ];
+
+    const router = createRouter({
+      history: createWebHistory(process.env.BASE_URL),
+      routes,
+    });
+
+    const wrapperApp = mount(App, {
+      global: {
+        plugins: [router, store],
+        stubs: { FontAwesomeIcon },
+      },
+    });
+
+    router.push('/cart');
+
+    await router.isReady();
+    await wrapperApp.find('[data-test="order"]').trigger('click');
+    await flushPromises();
+
+    expect(wrapperApp.findComponent(Order).exists()).toBeTruthy();
   });
 });

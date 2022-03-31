@@ -4,7 +4,8 @@
     <ItemSort @sortItem='sortItem' />
     <!-- ItemList -->
     <div class='item-list' data-test='item-list'>
-      <router-link v-for='item in itemData' :key='item.product_no' :to='`/item/${item.product_no}`'>
+      <router-link class='link-to-item'
+        v-for='item in itemData' :key='item.product_no' :to='`/item/${item.product_no}`'>
         <Item
           :id= 'item.product_no'
           :image= 'item.image'
@@ -17,12 +18,12 @@
     </div>
   </div>
 
-  <Circle v-else class='loading item-center' data-test='loading' />
+  <LoadingCircle v-else data-test='loading' />
   <TheNavbar :state='"item"' />
 </template>
 
 <script>
-import Circle from '../components/ItemCommon/Circle.vue';
+import LoadingCircle from '../components/ItemCommon/LoadingCircle.vue';
 import ItemSort from '../components/ItemList/ItemSort.vue';
 import Item from '../components/ItemList/Item.vue';
 import TheNavbar from '../components/ItemCommon/TheNavbar.vue';
@@ -34,7 +35,7 @@ const ItemRepository = Repository.get('item');
 export default {
   name: 'ItemListPage',
   components: {
-    Circle,
+    LoadingCircle,
     ItemSort,
     Item,
     TheNavbar,
@@ -80,12 +81,12 @@ export default {
       if (point === '리뷰 많은순') this.sortDesending('reviewLength');
     },
     async getItemData() {
-      const result = await ItemRepository.getItems();
-      if (result.status === 200) {
+      try {
+        const result = await ItemRepository.getItems();
         this.itemData = result.data.items;
         this.loading = false;
-      } else {
-        console.log(result);
+      } catch (error) {
+        console.log(error);
       }
     },
   },
@@ -132,5 +133,8 @@ export default {
 .sort-btn:hover{
   cursor: pointer;
 }
-
+.link-to-item {
+  text-decoration: none;
+  color: Black;
+}
 </style>

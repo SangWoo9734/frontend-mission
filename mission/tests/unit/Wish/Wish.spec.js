@@ -1,6 +1,8 @@
 import { flushPromises, mount } from '@vue/test-utils';
+import { createStore } from 'vuex';
 import Wish from '@/views/Wish.vue';
 import WishAPI from '@/repositories/WishRepository';
+import cartStore from '@/store/modules/cartStore';
 
 const wishData = [
   {
@@ -17,13 +19,23 @@ const response = {
   data: { items: wishData },
 };
 
+const store = createStore({
+  modules: {
+    cart: cartStore,
+  },
+});
+
 WishAPI.getWish = jest.fn().mockResolvedValue(response);
 
 let wrapper;
 
-describe('Cart.vue', () => {
+describe('wish.vue', () => {
   beforeEach(async () => {
-    wrapper = mount(Wish);
+    wrapper = mount(Wish, {
+      global: {
+        plugins: [store],
+      },
+    });
 
     await wrapper.setData({
       loading: false,

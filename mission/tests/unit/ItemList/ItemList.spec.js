@@ -1,5 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils';
-import { createRouter, createWebHashHistory } from 'vue-router';
+import { createRouter, createWebHistory } from 'vue-router';
+import { createStore } from 'vuex';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
@@ -10,6 +11,7 @@ import App from '@/App.vue';
 import ItemList from '@/views/ItemList.vue';
 import ItemInfo from '@/views/ItemInfo.vue';
 import ItemAPI from '@/repositories/ItemRepository';
+import cartStore from '@/store/modules/cartStore';
 
 library.add(fas, far);
 
@@ -43,7 +45,7 @@ const testData = [
 ];
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(process.env.BASE_URL),
   routes: [
     {
       path: '/item',
@@ -62,12 +64,19 @@ const response = {
   },
 };
 
+const store = createStore({
+  modules: {
+    cart: cartStore,
+  },
+});
+
 ItemAPI.getItems = jest.fn().mockResolvedValue(response);
 
 describe('ItemList', () => {
   beforeEach(async () => {
     wrapper = mount(ItemList, {
       global: {
+        plugins: [store],
         stubs: { FontAwesomeIcon },
       },
     });
@@ -93,15 +102,27 @@ describe('ItemList', () => {
 
   it('routing to ItemInfo', async () => {
     const wrapperApp = mount(App, {
+      data() {
+        return {
+          itemData: testData,
+          loading: true,
+        };
+      },
       global: {
-        plugins: [router],
+        plugins: [router, store],
         stubs: { FontAwesomeIcon },
       },
     });
 
     router.push('/item');
-
     await router.isReady();
+    expect(wrapperApp.findComponent(ItemList).exists()).toBeTruthy();
+
+    await wrapperApp.setData({
+      loading: false,
+    });
+    await flushPromises();
+
     await wrapperApp.find('[data-test="item"]').trigger('click');
     await flushPromises();
 
@@ -141,7 +162,6 @@ describe('ItemList', () => {
     allItems.forEach((item) => {
       expect(item.find('[data-test="item-image"]').exists()).toBeTruthy();
       expect(item.find('[data-test="item-title"]').exists()).toBeTruthy();
-      expect(item.find('[data-test="item-averagerate"]').exists()).toBeTruthy();
       expect(item.find('[data-test="item-discounted-cost"]').exists()).toBeTruthy();
     });
   });

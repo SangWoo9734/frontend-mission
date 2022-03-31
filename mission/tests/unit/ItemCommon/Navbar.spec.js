@@ -1,9 +1,12 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { createRouter, createWebHistory } from 'vue-router';
+import { createStore } from 'vuex';
+
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import cartStore from '@/store/modules/cartStore';
 
 import App from '@/App.vue';
 import TheNavbar from '@/components/ItemCommon/TheNavbar.vue';
@@ -15,38 +18,60 @@ import MyPage from '@/views/MyPage.vue';
 library.add(fas, far);
 
 let wrapper;
+const testData = [
+  {
+    image: 'image1',
+    name: 'item1',
+    quantity: 1,
+    original_price: 10000,
+    price: 10000,
+  },
+  {
+    image: 'image1',
+    name: 'item2',
+    quantity: 2,
+    original_price: 20000,
+    price: 12000,
+  },
+];
+
+const store = createStore({
+  modules: {
+    cart: cartStore,
+  },
+});
+
+const routes = [
+  {
+    path: '/item',
+    component: ItemList,
+  },
+  {
+    path: '/cart',
+    component: Cart,
+  },
+  {
+    path: '/wish',
+    component: Wish,
+  },
+  {
+    path: '/mypage',
+    component: MyPage,
+  },
+];
+
+const router = createRouter({
+  history: createWebHistory(process.env.BASE_URL),
+  routes,
+});
 
 describe('Navigation routing', () => {
-  const routes = [
-    {
-      path: '/item',
-      component: ItemList,
-    },
-    {
-      path: '/cart',
-      component: Cart,
-    },
-    {
-      path: '/wish',
-      component: Wish,
-    },
-    {
-      path: '/mypage',
-      component: MyPage,
-    },
-  ];
-
-  const router = createRouter({
-    history: createWebHistory(process.env.BASE_URL),
-    routes,
-  });
-
   let wrapperApp;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     wrapperApp = mount(App, {
       global: {
-        plugins: [router],
+        plugins: [router, store],
         stubs: { FontAwesomeIcon },
       },
     });
@@ -96,14 +121,19 @@ describe('Navigation routing', () => {
 describe('Navigation Bar', () => {
   const mockSelectMenu = jest.fn();
   const mockisSelected = jest.fn();
+  const mockIsCartBtn = jest.fn().mockResolvedValue(true);
 
   beforeEach(async () => {
+    cartStore.state.cartItem = testData;
+
     wrapper = mount(TheNavbar, {
       methods: {
         selectMenu: mockSelectMenu,
         isSelected: mockisSelected,
+        isCartBtn: mockIsCartBtn,
       },
       global: {
+        plugins: [router, store],
         stubs: { FontAwesomeIcon },
       },
     });
@@ -157,6 +187,14 @@ describe('Navigation Bar', () => {
 
   it('renders "Cart" buttons', () => {
     expect(wrapper.find('[data-test="nav-button-cart"]').text()).toContain('Cart');
+  });
+
+  it('renders number which show the number of items in cart', () => {
+    expect(wrapper.find('[data-test="cart-count"]').exists()).toBeTruthy();
+  });
+
+  it('renders right number which show the number of items in cart', () => {
+    expect(wrapper.find('[data-test="cart-count"]').text()).toEqual('2');
   });
 
   it('renders "MyPage" buttons', () => {

@@ -83,6 +83,9 @@ export default {
   padding: 0 10px;
   text-align: left;
 }
+.item-info-container * {
+  text-decoration: none;
+}
 .item-title {
   font-size: 18px;
 }

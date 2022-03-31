@@ -36,11 +36,16 @@
         </div>
       </div>
     </div>
-    <button id='delete' class='cart-delete' data-test='delete-button'>삭제</button>
+    <button id='delete' class='cart-delete' @click='removeItemFromCart' data-test='delete-button'>
+      삭제
+    </button>
   </div>
 </template>
 
 <script>
+// Library
+import { mapActions } from 'vuex';
+
 export default {
   name: 'CartItem',
   props: {
@@ -71,16 +76,19 @@ export default {
     },
   },
   methods: {
+    ...mapActions('cart', [
+      'AC_ADD_QUANTITY',
+      'AC_SUB_QUANTITY',
+      'AC_REMOVE_ITEM_FROM_CART',
+    ]),
     addQuantity() {
-      this.$emit('addQuantity', this.id);
+      this.AC_ADD_QUANTITY(this.id);
     },
     subQuantity() {
-      if (this.quantity === 1) {
-        // eslint-disable-next-line no-alert
-        alert('더이상 수량을 줄일 수 없습니다.');
-      } else {
-        this.$emit('subQuantity', this.id);
-      }
+      this.AC_SUB_QUANTITY(this.id);
+    },
+    removeItemFromCart() {
+      this.AC_REMOVE_ITEM_FROM_CART(this.id);
     },
   },
 };
@@ -133,7 +141,7 @@ export default {
   align-items: center;
   margin-bottom: 5px;
 }
- .cart-item-info-price {
+.cart-item-info-price {
   justify-content: space-between;
   align-items: flex-end;
 }
